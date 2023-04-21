@@ -1,10 +1,14 @@
-ul {
+nav ul {
   display: flex;
   list-style-type: none;
   margin: 10px 0;
   padding: 0;
 }
 
-li {
+nav li {
   padding: 0 10px;
+}
+
+[aria-current] {
+  font-weight: bold;
 }

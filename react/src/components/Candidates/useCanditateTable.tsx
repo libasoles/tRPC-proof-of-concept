@@ -52,7 +52,7 @@ const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (candida
         Header: "Razones", accessor: "reason", Cell: ({ value, row }) =>
           <div className="pills">
             {formatReasons(value)}
-            <button className="add-button" onClick={() => onAddReason(row.original)}>Agregar</button>
+            <button className="add-button" onClick={() => onAddReason(row.original)}>Editar</button>
           </div>
       },
     ].filter(column => requestedFields.includes(column.accessor as string))

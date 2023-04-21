@@ -1,6 +1,6 @@
 export const Assignment = () => {
     return (
-        <div style={{ textAlign: "left" }}>
+        <div style={{ textAlign: "left", padding: "0 40px 40px 40px" }}>
             <h1>Assignment</h1>
             <h2>Part one</h2>
             <p>

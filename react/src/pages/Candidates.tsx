@@ -1,11 +1,11 @@
 import { SyntheticEvent, useCallback, useState } from "react";
 import Pagination from "../components/Candidates/Pagination";
 import useCanditateTable, { EnabledColumns } from "../components/Candidates/useCanditateTable";
-import "./Candidates.css";
 import { createPortal } from "react-dom";
 import RejectionReasons from "../components/Candidates/RejectionReasons";
 import { queryClient, trpc } from "../api";
 import { Candidate } from "../../../trpc/types";
+import "./Candidates.css";
 
 type Props = { enabledColumns: EnabledColumns }
 
@@ -73,6 +73,7 @@ export const Candidates = ({ enabledColumns }: Props) => {
   return (
     <div className="content">
       {(status === 'loading') && <div className="loading"><span>Cargando...</span></div>}
+      {/* TODO: make first column static and table scrollable */}
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
