@@ -1,19 +1,13 @@
 import { Candidate } from "../../../server/src/types";
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
-import { AppRouter } from "../../../server/src/server";
 import { useState, useEffect } from "react";
-
-// TODO: move this to a shared file
-const client = createTRPCProxyClient<AppRouter>({
-  links: [httpBatchLink({ url: "http://localhost:3001/trpc" })],
-});
+import api from "../api";
 
 export const Candidates = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
 
   useEffect(() => {
     const fetchCandidates = async () => {
-      const candidates = await client.all.query();
+      const candidates = await api.candidates.all.query();
       setCandidates(candidates);
     };
 
