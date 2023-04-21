@@ -22,3 +22,5 @@ export type Candidate = {
   had_interview: string;
   reason: string[];
 };
+
+export type CandidateField = keyof Candidate;
