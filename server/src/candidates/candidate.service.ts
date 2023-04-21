@@ -2,16 +2,27 @@ import { Candidate } from "../testData";
 import candidateRepository from "./candidate.repository";
 import { CandidateRequestedFields } from "./candidate.types";
 
+// TODO: move to config file or retrieve from frontend
+const numberOfRecordsPerPage = 10;
+
 type Params = {
   requestedFields?: CandidateRequestedFields;
+  offset?: number;
 };
 
 export default {
-  all: ({ requestedFields }: Params) => {
+  all: ({ requestedFields, offset }: Params) => {
     // TODO: inject repository
-    const candidates = candidateRepository.all(requestedFields);
+    const { results, numberOfRecords } = candidateRepository.all(
+      requestedFields,
+      offset,
+      numberOfRecordsPerPage
+    );
 
-    return transform(candidates);
+    return {
+      candidates: transform(results),
+      numberOfRecords,
+    };
   },
 };
 

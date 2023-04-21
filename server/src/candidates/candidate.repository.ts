@@ -12,11 +12,17 @@ const using = (requestedFields: CandidateRequestedFields) => ({
 });
 
 export default {
-  all: (requestedFields?: CandidateRequestedFields) => {
-    return (
-      candidates
-        // @ts-ignore
-        .map((candidate) => using(requestedFields).reduce(candidate))
-    );
+  all: (requestedFields?: CandidateRequestedFields, offset = 0, limit = 10) => {
+    const start = offset * limit;
+
+    const results = candidates
+      .slice(start, start + 10)
+      // @ts-ignore
+      .map((candidate) => using(requestedFields).reduce(candidate));
+
+    return {
+      results,
+      numberOfRecords: candidates.length,
+    };
   },
 };
