@@ -1,0 +1,37 @@
+tr {
+  width: 100%;
+}
+
+tr:nth-of-type(odd) {
+  background: #e3e3e3;
+}
+
+th {
+  width: 100%;
+  background: #000;
+  color: #fff;
+  padding: 0 8px;
+}
+
+td {
+  width: 100%;
+  padding: 0 8px;
+}
+
+a {
+  color: #0e98e2;
+  text-decoration: none;
+}
+
+.pills {
+  display: flex;
+  flex-direction: column;
+}
+
+.pill {
+  background: #73ccfc;
+  border-radius: 10%;
+  padding: 5px;
+  margin: 2px;
+  font-size: 0.8em;
+}
