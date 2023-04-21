@@ -1419,7 +1419,10 @@ class Candidates {
   ];
 
   list() {
-    return this.store;
+    // TODO: sort could be parametized
+    return this.store.sort((a, b) =>
+      (a.name as string).localeCompare(b.name as string)
+    );
   }
 
   slice(start: number, amount: number) {

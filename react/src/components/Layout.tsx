@@ -3,7 +3,7 @@ import "./Layout.css"
 
 export const Layout = () => {
     return (
-        <div>
+        <>
             <nav>
                 <ul>
                     <li>
@@ -16,6 +16,6 @@ export const Layout = () => {
             </nav>
             <hr />
             <Outlet />
-        </div>
+        </>
     );
 };

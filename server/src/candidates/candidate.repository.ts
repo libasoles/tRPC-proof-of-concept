@@ -16,7 +16,7 @@ export default {
     const start = offset * limit;
 
     const results = candidates
-      .slice(start, start + limit)
+      .slice(start, limit)
       // @ts-ignore
       .map((candidate) => using(requestedFields).reduce(candidate));
 

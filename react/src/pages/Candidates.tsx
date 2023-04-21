@@ -5,30 +5,36 @@ import "./Candidates.css";
 import { createPortal } from "react-dom";
 import RejectionReasons from "../components/Candidates/RejectionReasons";
 import { queryClient, trpc } from "../api";
-import { Reason } from "../../../trpc/types";
+import { Candidate } from "../../../trpc/types";
 
 type Props = { enabledColumns: EnabledColumns }
 
 export const Candidates = ({ enabledColumns }: Props) => {
   const [displayReasons, setDisplayReasons] = useState(false)
   const [preselectedReasons, setPreselectedReasons] = useState<number[]>([])
+  const [currentCandidate, setCurrentCandidate] = useState<Candidate | null>(null)
 
-  const onAddReason = useCallback((selectedReasons: Reason[]) => {
+  const onAddReason = useCallback((candidate: Candidate) => {
     setDisplayReasons(true)
-    setPreselectedReasons(selectedReasons.map(({ id }) => id))
+    setPreselectedReasons(candidate.reason.map(({ id }) => id))
+    setCurrentCandidate(candidate)
   }, [])
 
   const mutation = trpc.candidates.updateReasons.useMutation()
 
   const onSelectReason = useCallback((e: SyntheticEvent<HTMLInputElement>) => {
+    if (!currentCandidate) return
+
     const value = Number(e.currentTarget.value)
-    setPreselectedReasons(reasons => [...reasons, value]);
 
-    const selection = [...preselectedReasons, value]
+    const updatedReasons = preselectedReasons.filter(reason => reason !== value)
 
-    // TODO: use real candidateId
-    mutation.mutate({ candidateId: "5a271a1368adf47eb31fe683", reasonIds: selection })
-  }, [mutation, preselectedReasons])
+    if (e.currentTarget.checked) updatedReasons.push(value)
+
+    setPreselectedReasons(updatedReasons);
+
+    mutation.mutate({ candidateId: currentCandidate.id, reasonIds: updatedReasons })
+  }, [mutation, preselectedReasons, currentCandidate])
 
   const onClose = useCallback((e: SyntheticEvent) => {
     const shouldDismiss = !HTMLButtonElement.prototype.isPrototypeOf(e.target) && (e.target as HTMLButtonElement).getAttribute("role") !== "button"
@@ -39,6 +45,14 @@ export const Candidates = ({ enabledColumns }: Props) => {
     // TODO: not working
     queryClient.invalidateQueries(['candidates', 'all'])
     queryClient.invalidateQueries(['candidates.all'])
+
+    const queryCache = queryClient.getQueryCache();
+    const queries = queryCache.findAll();
+
+    // TODO: too much. Only invalidate the candidates.all query
+    queries.forEach((query) => {
+      queryClient.invalidateQueries(query.queryKey);
+    });
   }, [])
 
   const {
@@ -49,15 +63,16 @@ export const Candidates = ({ enabledColumns }: Props) => {
     headerGroups,
     rows,
     prepareRow,
-    onPageChange
+    currentPage,
+    setCurrentPage,
   } = useCanditateTable(enabledColumns, onAddReason)
 
   if (status === 'error')
     return <div className="error">Hubo un error cargando el listado. Intenta recargando la pagina.</div>
 
   return (
-    <>
-      {(status === 'loading') && <div className="loading">Cargando...</div>}
+    <div className="content">
+      {(status === 'loading') && <div className="loading"><span>Cargando...</span></div>}
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
@@ -83,7 +98,11 @@ export const Candidates = ({ enabledColumns }: Props) => {
           }
         </tbody>
       </table >
-      <Pagination onPageChange={onPageChange} totalRows={numberOfRecords} rowsPerPage={10} />
+
+      <Pagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalRows={numberOfRecords} rowsPerPage={10} />
 
       {displayReasons && createPortal(
         <RejectionReasons
@@ -92,6 +111,6 @@ export const Candidates = ({ enabledColumns }: Props) => {
           onClose={onClose}
         />
         , document.body)}
-    </>
+    </div>
   );
 };

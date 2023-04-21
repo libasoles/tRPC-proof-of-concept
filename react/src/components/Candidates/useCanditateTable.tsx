@@ -1,31 +1,28 @@
 import type { Candidate, CandidateField, Reason } from "../../../../trpc/types";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import dayjs from 'dayjs'
 import { Column, useTable } from "react-table"
 import { trpc } from "../../api";
 
 export type EnabledColumns = Record<CandidateField, boolean>
 
-const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (selectedReasonIds: Reason[]) => void) => {
+const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (candidate: Candidate) => void) => {
   const requestedFields: string[] = useMemo(() => Object.entries(enabledColumns).filter(([_, value]) => value).map(([key, _]) => key), [enabledColumns])
 
   const [candidates, setCandidates] = useState<Partial<Candidate>[]>([]);
   const [numberOfRecords, setNumberOfRecords] = useState(0);
 
-  const { data, status } = trpc.candidates.all.useQuery({ requestedFields })
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data, status } = trpc.candidates.all.useQuery({ requestedFields, pageNumber: currentPage })
 
   useEffect(() => {
     setCandidates(data?.candidates || []);
     setNumberOfRecords(data?.numberOfRecords || 0)
   }, [data]);
 
-  // TODO: fix pagination
-  const onPageChange = useCallback((pageNumber: number) => {
-    // fetchCandidates(pageNumber)
-  }, [])
-
   const columns = useMemo<Column<Partial<Candidate>>[]>(
-    // TODO: extract ouside the hook?
+    // TODO: extract outside the hook?
     () => [
       { Header: "Nombre", accessor: "name" },
       { Header: "DNI", accessor: "document" },
@@ -52,10 +49,10 @@ const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (selecte
       { Header: "Fue entrevistado", accessor: "had_interview", Cell: ({ value }) => <>{formatBoolean(value)}</> },
       {
         // @ts-ignore
-        Header: "Razones", accessor: "reason", Cell: ({ value }) =>
+        Header: "Razones", accessor: "reason", Cell: ({ value, row }) =>
           <div className="pills">
             {formatReasons(value)}
-            <button className="add-button" onClick={() => onAddReason(value)}>Agregar</button>
+            <button className="add-button" onClick={() => onAddReason(row.original)}>Agregar</button>
           </div>
       },
     ].filter(column => requestedFields.includes(column.accessor as string))
@@ -69,7 +66,8 @@ const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (selecte
   return {
     status,
     numberOfRecords,
-    onPageChange,
+    currentPage,
+    setCurrentPage,
     ...useTable<Partial<Candidate>>({
       columns,
       data: candidates,

@@ -14,7 +14,7 @@ function validateListParameters() {
 function validateRejectParameters() {
   return z.object({
     candidateId: z.string(),
-    reasonIds: z.array(z.number()).optional(),
+    reasonIds: z.array(z.number()),
   });
 }
 

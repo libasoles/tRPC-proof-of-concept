@@ -8,7 +8,7 @@ const numberOfRecordsPerPage = 10;
 
 type QueryAllParams = {
   requestedFields?: CandidateRequestedFields;
-  offset?: number;
+  pageNumber?: number;
 };
 
 type RejectParams = {
@@ -17,11 +17,11 @@ type RejectParams = {
 };
 
 export default {
-  all: ({ requestedFields, offset }: QueryAllParams) => {
+  all: ({ requestedFields, pageNumber }: QueryAllParams) => {
     // TODO: inject repository
     const { results, numberOfRecords } = candidateRepository.all(
       requestedFields,
-      offset,
+      pageNumber,
       numberOfRecordsPerPage
     );
 

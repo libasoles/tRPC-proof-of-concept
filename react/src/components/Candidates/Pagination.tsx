@@ -2,12 +2,10 @@ import { useState, useEffect } from "react";
 import "./Pagination.css";
 
 // @ts-ignore
-const Pagination = ({ onPageChange, totalRows, rowsPerPage }) => {
+const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }) => {
     const numberOfPages = Math.floor(totalRows / rowsPerPage);
 
     const pages = [...new Array(numberOfPages)];
-
-    const [currentPage, setCurrentPage] = useState(1);
 
     const [canGoBack, setCanGoBack] = useState(false);
     const [canGoNext, setCanGoNext] = useState(true);
@@ -16,7 +14,6 @@ const Pagination = ({ onPageChange, totalRows, rowsPerPage }) => {
     const onPrevPage = () => setCurrentPage(currentPage - 1);
     const onPageSelect = (pageNumber: number) => {
         setCurrentPage(pageNumber)
-        onPageChange(pageNumber)
     };
 
     useEffect(() => {
