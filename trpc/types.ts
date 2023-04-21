@@ -2,6 +2,11 @@ import appRouter from "../server/src/routers";
 
 export type AppRouter = typeof appRouter;
 
+export type Reason = {
+  id: number;
+  description: string;
+};
+
 export type Candidate = {
   id: string;
   name: string;
@@ -20,7 +25,7 @@ export type Candidate = {
   accepts_working_hours: boolean;
   desired_salary: number;
   had_interview: boolean;
-  reason: string[];
+  reason: Reason[];
 };
 
 export type CandidateField = keyof Candidate;

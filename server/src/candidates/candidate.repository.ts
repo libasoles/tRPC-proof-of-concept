@@ -1,6 +1,6 @@
-import { Candidate, candidates } from "../testData";
+import { candidates } from "../testData";
 import type { CandidateRequestedFields } from "./candidate.types";
-import type { CandidateField } from "../../../trpc/types";
+import type { Candidate, CandidateField, Reason } from "../../../trpc/types";
 
 const using = (requestedFields: CandidateRequestedFields) => ({
   reduce: (candidate: Candidate) =>
@@ -16,13 +16,26 @@ export default {
     const start = offset * limit;
 
     const results = candidates
-      .slice(start, start + 10)
+      .slice(start, start + limit)
       // @ts-ignore
       .map((candidate) => using(requestedFields).reduce(candidate));
 
     return {
       results,
-      numberOfRecords: candidates.length,
+      numberOfRecords: candidates.list().length,
     };
+  },
+  updateReasons: (candidateId: string, reasonIds: number[]) => {
+    const candidate = candidates.get(candidateId);
+
+    if (!candidate) {
+      throw new Error("Candidate not found");
+    }
+
+    candidate.reason = reasonIds;
+
+    candidates.update(candidate);
+
+    return candidate;
   },
 };

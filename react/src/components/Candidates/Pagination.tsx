@@ -47,6 +47,7 @@ const Pagination = ({ onPageChange, totalRows, rowsPerPage }) => {
                 </button>
                 {pages.map((_, index) => (
                     <button
+                        key={index}
                         onClick={() => onPageSelect(index + 1)}
                         className={`${"pageButton"} ${index + 1 === currentPage ? "activePage" : ""}`}
                     >

@@ -1,33 +1,31 @@
-import type { Candidate, CandidateField } from "../../../../trpc/types";
+import type { Candidate, CandidateField, Reason } from "../../../../trpc/types";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import api from "../../api";
 import dayjs from 'dayjs'
 import { Column, useTable } from "react-table"
+import { trpc } from "../../api";
 
 export type EnabledColumns = Record<CandidateField, boolean>
 
-const useCanditateTable = (enabledColumns: EnabledColumns) => {
+const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (selectedReasonIds: Reason[]) => void) => {
   const requestedFields: string[] = useMemo(() => Object.entries(enabledColumns).filter(([_, value]) => value).map(([key, _]) => key), [enabledColumns])
 
   const [candidates, setCandidates] = useState<Partial<Candidate>[]>([]);
   const [numberOfRecords, setNumberOfRecords] = useState(0);
 
-  // TODO: implement this using React Query
-  const fetchCandidates = useCallback(async (pageNumber = 1) => {
-    const { candidates, numberOfRecords } = await api.candidates.all.query({ requestedFields, pageNumber });
-    setCandidates(candidates);
-    setNumberOfRecords(numberOfRecords);
-  }, [requestedFields]);
+  const { data, status } = trpc.candidates.all.useQuery({ requestedFields })
 
   useEffect(() => {
-    fetchCandidates();
-  }, [fetchCandidates]);
+    setCandidates(data?.candidates || []);
+    setNumberOfRecords(data?.numberOfRecords || 0)
+  }, [data]);
 
+  // TODO: fix pagination
   const onPageChange = useCallback((pageNumber: number) => {
-    fetchCandidates(pageNumber)
-  }, [fetchCandidates])
+    // fetchCandidates(pageNumber)
+  }, [])
 
   const columns = useMemo<Column<Partial<Candidate>>[]>(
+    // TODO: extract ouside the hook?
     () => [
       { Header: "Nombre", accessor: "name" },
       { Header: "DNI", accessor: "document" },
@@ -52,17 +50,24 @@ const useCanditateTable = (enabledColumns: EnabledColumns) => {
       { Header: "Expectativa salarial", accessor: "desired_salary", Cell: ({ value }) => <>{formatMoney(value)}</> },
       // @ts-ignore
       { Header: "Fue entrevistado", accessor: "had_interview", Cell: ({ value }) => <>{formatBoolean(value)}</> },
-      // @ts-ignore
-      { Header: "Razones", accessor: "reason", Cell: ({ value }) => <div className="pills">{formatReasons(value)}</div> },
+      {
+        // @ts-ignore
+        Header: "Razones", accessor: "reason", Cell: ({ value }) =>
+          <div className="pills">
+            {formatReasons(value)}
+            <button className="add-button" onClick={() => onAddReason(value)}>Agregar</button>
+          </div>
+      },
     ].filter(column => requestedFields.includes(column.accessor as string))
       .map((column) => ({
         ...column,
         accessor: column.accessor as keyof Partial<Candidate>,
       })),
-    [requestedFields]
+    [requestedFields, onAddReason]
   )
 
   return {
+    status,
     numberOfRecords,
     onPageChange,
     ...useTable<Partial<Candidate>>({
@@ -88,8 +93,8 @@ function formatMoney(value: boolean) {
   return `$${value}`;
 }
 
-function formatReasons(values: string[]) {
-  return values.map(value => <span key={value} className="pill">{value}</span>);
+function formatReasons(values: Reason[]) {
+  return values.map(value => <span key={value.id} className="pill">{value.description}</span>);
 }
 
 export default useCanditateTable;

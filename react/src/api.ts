@@ -1,8 +1,12 @@
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
-import { AppRouter } from "../../trpc/types";
+import { httpBatchLink } from "@trpc/client";
+import type { AppRouter } from "../../trpc/types";
+import { createTRPCReact } from "@trpc/react-query";
+import { QueryClient } from "@tanstack/react-query";
 
-const apiClient = createTRPCProxyClient<AppRouter>({
+export const queryClient = new QueryClient();
+
+export const trpc = createTRPCReact<AppRouter>();
+
+export const trpcClient = trpc.createClient({
   links: [httpBatchLink({ url: "http://localhost:3001/trpc" })],
 });
-
-export default apiClient;

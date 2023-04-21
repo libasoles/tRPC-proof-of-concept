@@ -2,7 +2,7 @@ import candidateService from "../candidates/candidate.service";
 import { t } from "../trpc";
 import { z } from "zod";
 
-function validateInput() {
+function validateListParameters() {
   return z
     .object({
       requestedFields: z.array(z.string()).optional(),
@@ -10,17 +10,23 @@ function validateInput() {
     })
     .optional();
 }
+
+function validateRejectParameters() {
+  return z.object({
+    candidateId: z.string(),
+    reasonIds: z.array(z.number()).optional(),
+  });
+}
+
 const candidateRouter = t.router({
   // TODO: inject service
-  all: t.procedure.input(validateInput()).query(({ input }) => {
-    const { pageNumber, requestedFields } = input || {};
-
-    return candidateService.all({
-      // @ts-ignore
-      requestedFields: requestedFields,
-      offset: pageNumber,
-    });
-  }),
+  all: t.procedure
+    .input(validateListParameters())
+    // @ts-ignore
+    .query(({ input }) => candidateService.all(input)),
+  updateReasons: t.procedure
+    .input(validateRejectParameters())
+    .mutation(({ input }) => candidateService.updateReasons(input)),
 });
 
 export default candidateRouter;
