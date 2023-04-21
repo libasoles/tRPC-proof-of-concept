@@ -12,14 +12,14 @@ export type Candidate = {
   email: string;
   date: string;
   age: number;
-  has_university: string;
+  has_university: boolean;
   career: string;
   graduated: string;
   courses_approved: string;
   location: string;
-  accepts_working_hours: string;
-  desired_salary: string; // TODO: handle this as a number
-  had_interview: string;
+  accepts_working_hours: boolean;
+  desired_salary: number;
+  had_interview: boolean;
   reason: string[];
 };
 

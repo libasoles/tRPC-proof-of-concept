@@ -35,14 +35,18 @@ const useCanditateTable = (enabledColumns: EnabledColumns) => {
       // @ts-ignore
       { Header: "Fecha", accessor: "date", Cell: ({ value }) => <>{formatDate(value)}</> },
       { Header: "Edad", accessor: "age" },
-      { Header: "Universitario", accessor: "has_university" },
+      // @ts-ignore
+      { Header: "Universitario", accessor: "has_university", Cell: ({ value }) => <>{formatBoolean(value)}</> },
       { Header: "Carrera", accessor: "career" },
       { Header: "Graduado", accessor: "graduated" },
-      { Header: "Materias a probadas", accessor: "courses_approved" },
+      { Header: "Materias aprobadas", accessor: "courses_approved" },
       { Header: "Ubicacion", accessor: "location" },
-      { Header: "Acepta carga horaria", accessor: "accepts_working_hours" },
-      { Header: "Expectativa salarial", accessor: "desired_salary" },
-      { Header: "Fue entrevistado", accessor: "had_interview" },
+      // @ts-ignore
+      { Header: "Acepta carga horaria", accessor: "accepts_working_hours", Cell: ({ value }) => <>{formatBoolean(value)}</> },
+      // @ts-ignore
+      { Header: "Expectativa salarial", accessor: "desired_salary", Cell: ({ value }) => <>{formatMoney(value)}</> },
+      // @ts-ignore
+      { Header: "Fue entrevistado", accessor: "had_interview", Cell: ({ value }) => <>{formatBoolean(value)}</> },
       // @ts-ignore
       { Header: "Razones", accessor: "reason", Cell: ({ value }) => <div className="pills">{formatReasons(value)}</div> },
     ].filter(column => requestedFields.includes(column.accessor as string))
@@ -105,6 +109,14 @@ function formatLink(value: string) {
 
 function formatDate(value: string) {
   return dayjs(value).format('DD/MM/YYYY');
+}
+
+function formatBoolean(value: boolean) {
+  return value ? "Si" : "No";
+}
+
+function formatMoney(value: boolean) {
+  return `$${value}`;
 }
 
 function formatReasons(values: string[]) {
