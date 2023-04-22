@@ -1,4 +1,6 @@
-export enum Paths {
+enum Paths {
   Home = "/",
   Candidates = "/candidates",
 }
+
+export default Paths;

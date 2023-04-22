@@ -1,4 +1,4 @@
-export const Assignment = () => {
+const Assignment = () => {
     return (
         <div style={{ textAlign: "left", padding: "0 40px 40px 40px" }}>
             <h1>Assignment</h1>
@@ -97,3 +97,5 @@ export const Assignment = () => {
         </div>
     )
 }
+
+export default Assignment

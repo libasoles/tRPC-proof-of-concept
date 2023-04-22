@@ -1,9 +1,9 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Layout } from "./Layout";
+import Layout from "./Layout";
 import userEvent from "@testing-library/user-event";
-import { Paths } from "@/paths";
+import Paths from "@/paths";
 import { act } from "react-dom/test-utils";
 
 describe("Layout", () => {

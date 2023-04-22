@@ -10,7 +10,7 @@ import "./Candidates.css";
 type Props = { enabledColumns: EnabledColumns }
 
 // TODO: extract part of this logic to a hook
-export const Candidates = ({ enabledColumns }: Props) => {
+const Candidates = ({ enabledColumns }: Props) => {
   const [displayReasons, setDisplayReasons] = useState(false)
   const [preselectedReasons, setPreselectedReasons] = useState<number[]>([])
   const [currentCandidate, setCurrentCandidate] = useState<Candidate | null>(null)
@@ -135,3 +135,5 @@ export const Candidates = ({ enabledColumns }: Props) => {
     </div >
   );
 };
+
+export default Candidates;

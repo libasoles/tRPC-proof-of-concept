@@ -1,12 +1,12 @@
 import { NavLink, Outlet } from "react-router-dom";
+import Paths from "@/paths";
 import "./Layout.css"
-import { Paths } from "@/paths";
 
 type Props = {
     paths?: typeof Paths
 };
 
-export const Layout = ({ paths = Paths }: Props) => {
+const Layout = ({ paths = Paths }: Props) => {
     return (
         <>
             <nav>
@@ -26,3 +26,5 @@ export const Layout = ({ paths = Paths }: Props) => {
         </>
     );
 };
+
+export default Layout;
