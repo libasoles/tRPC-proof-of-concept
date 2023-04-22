@@ -1,9 +1,9 @@
 import { SyntheticEvent, useCallback, useState } from "react";
-import Pagination from "../components/Candidates/Pagination";
-import useCanditateTable, { EnabledColumns } from "../components/Candidates/useCanditateTable";
+import Pagination from "@/components/Candidates/Pagination";
+import useCanditateTable, { EnabledColumns } from "@/components/Candidates/useCanditateTable";
 import { createPortal } from "react-dom";
-import RejectionReasons from "../components/Candidates/RejectionReasons";
-import { queryClient, trpc } from "../api";
+import RejectionReasons from "@/components/Candidates/RejectionReasons";
+import { queryClient, trpc } from "@/api";
 import { Candidate } from "../../../trpc/types";
 import "./Candidates.css";
 

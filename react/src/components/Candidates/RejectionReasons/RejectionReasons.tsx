@@ -1,6 +1,6 @@
 
 import { ChangeEventHandler, SyntheticEvent } from "react"
-import { trpc } from "../../api"
+import { trpc } from "@/api"
 import "./RejectionReasons.css"
 
 type Props = {
