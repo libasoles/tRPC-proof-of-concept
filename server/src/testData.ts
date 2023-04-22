@@ -1420,16 +1420,17 @@ class Candidates {
     },
   ];
 
-  _filter: Filter | undefined;
+  private filters: Filter[] = [];
 
   filter(filter: Filter) {
-    this._filter = filter;
+    this.filters.push(filter);
 
     return this;
   }
 
   list() {
-    const results = this._filter ? this.store.filter(this._filter) : this.store;
+    const hasFilters = this.filters.length > 0;
+    const results = hasFilters ? this.applyFilters() : this.store;
 
     // TODO: sort could be parametized
     return results.sort((a, b) =>
@@ -1437,8 +1438,18 @@ class Candidates {
     );
   }
 
+  private applyFilters() {
+    return this.filters.reduce(
+      (result, criteria) => result.filter(criteria),
+      this.store
+    );
+  }
+
   slice(start: number, amount: number) {
-    return this.list().slice(start, start + amount);
+    const results = this.list().slice(start, start + amount);
+    this.resetFilters();
+
+    return results;
   }
 
   get(candidateId: string) {
@@ -1458,6 +1469,8 @@ class Candidates {
       },
     ];
   }
+
+  private resetFilters = () => (this.filters = []);
 }
 
 export const candidates = new Candidates();

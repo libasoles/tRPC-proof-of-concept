@@ -30,6 +30,11 @@ export default {
 
         return candidate.reason.length === 0;
       })
+      .filter((candidate) => {
+        if (search.trim() === "") return true;
+
+        return candidate.name.toLowerCase().includes(search.toLowerCase());
+      })
       .slice(start, limit)
       // @ts-ignore
       .map((candidate) => using(requestedFields).reduce(candidate));

@@ -77,7 +77,7 @@ export const Candidates = ({ enabledColumns }: Props) => {
       <form>
         <div className="filters">
           <div className="filter">
-            <input type="text" placeholder="Buscar..." />
+            <input type="text" placeholder="Buscar por nombre..." onKeyUp={(e) => filterResults("search", e.currentTarget.value)} />
           </div>
           <div className="filter">
             <label htmlFor="filter-status">

@@ -22,7 +22,6 @@ const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (candida
     setFilters((filters) => ({ ...filters, [name]: value }))
   }, [])
 
-
   const { data, status } = trpc.candidates.all.useQuery({ filters, requestedFields, pageNumber: currentPage })
 
   useEffect(() => {
