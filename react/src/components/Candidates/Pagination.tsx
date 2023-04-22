@@ -34,9 +34,9 @@ const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }) => 
 
     return (
         <div className="pagination">
-            <div className="pageButtons">
+            <div className="paginationButtons">
                 <button
-                    className="pageButton"
+                    className="arrowButton"
                     onClick={onPrevPage}
                     disabled={!canGoBack}
                 >
@@ -45,6 +45,7 @@ const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }) => 
                 {pages.map((_, index) => (
                     <button
                         key={index}
+                        data-testid="pageButton"
                         onClick={() => onPageSelect(index + 1)}
                         className={`${"pageButton"} ${index + 1 === currentPage ? "activePage" : ""}`}
                     >
@@ -52,7 +53,7 @@ const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }) => 
                     </button>
                 ))}
                 <button
-                    className="pageButton"
+                    className="arrowButton"
                     onClick={onNextPage}
                     disabled={!canGoNext}
                 >

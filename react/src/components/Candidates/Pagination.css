@@ -11,12 +11,13 @@
   border-radius: 5px;
 }
 
-.pageButtons {
+.paginationButtons {
   display: flex;
   flex-direction: row;
 }
 
-.pageButton {
+.pageButton,
+.arrowButton {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,7 +31,8 @@
   color: #1d2341;
 }
 
-.pageButton:hover {
+.pageButton:hover,
+.arrowButton:hover {
   opacity: 90%;
   color: #222;
 }
