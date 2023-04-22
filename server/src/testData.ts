@@ -21,7 +21,7 @@ export type Candidate = {
 
 type Filter = (candidate: Candidate) => boolean;
 
-class Candidates {
+export class Candidates {
   store: Candidate[] = [
     {
       id: "5a271a1368adf47eb31fe683",
@@ -1432,6 +1432,8 @@ class Candidates {
     const hasFilters = this.filters.length > 0;
     const results = hasFilters ? this.applyFilters() : this.store;
 
+    this.resetFilters();
+
     // TODO: sort could be parametized
     return results.sort((a, b) =>
       (a.name as string).localeCompare(b.name as string)
@@ -1447,7 +1449,6 @@ class Candidates {
 
   slice(start: number, amount: number) {
     const results = this.list().slice(start, start + amount);
-    this.resetFilters();
 
     return results;
   }

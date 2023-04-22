@@ -29,7 +29,7 @@ const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }) => 
         }
     }, [numberOfPages, currentPage]);
 
-    if (numberOfPages === 1)
+    if (numberOfPages <= 1)
         return null
 
     return (

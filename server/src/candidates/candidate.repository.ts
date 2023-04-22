@@ -1,47 +1,29 @@
-import { candidates } from "../testData";
+import { Candidates, candidates } from "../testData";
 import type { CandidateRequestedFields } from "./candidate.types";
-import type { Candidate, CandidateField, Reason } from "../../../trpc/types";
+import type { Candidate, CandidateField } from "../../../trpc/types";
 
-const using = (requestedFields: CandidateRequestedFields) => ({
-  reduce: (candidate: Candidate) =>
-    Object.fromEntries(
-      Object.entries(candidate).filter(([key]) =>
-        requestedFields?.includes(key as CandidateField)
-      )
-    ),
-});
+type Filters = {
+  onlyApproved: boolean;
+  search: string;
+};
 
 export default {
   all: (
-    filters = {
-      onlyApproved: false,
-      search: "",
-    },
+    filters: Filters,
     requestedFields?: CandidateRequestedFields,
     offset = 0,
     limit = 10
   ) => {
     const start = offset * limit;
-    const { onlyApproved, search } = filters;
 
-    const results = candidates
-      .filter((candidate) => {
-        if (!onlyApproved) return true;
-
-        return candidate.reason.length === 0;
-      })
-      .filter((candidate) => {
-        if (search.trim() === "") return true;
-
-        return candidate.name.toLowerCase().includes(search.toLowerCase());
-      })
+    const results = setup(candidates, filters)
       .slice(start, limit)
       // @ts-ignore
       .map((candidate) => using(requestedFields).reduce(candidate));
 
     return {
       results,
-      numberOfRecords: candidates.list().length,
+      numberOfRecords: setup(candidates, filters).list().length,
     };
   },
   updateReasons: (candidateId: string, reasonIds: number[]) => {
@@ -58,3 +40,28 @@ export default {
     return candidate;
   },
 };
+
+const setup = (candidates: Candidates, filters: Filters) => {
+  const { onlyApproved, search } = filters;
+
+  return candidates
+    .filter((candidate) => {
+      if (!onlyApproved) return true;
+
+      return candidate.reason.length === 0;
+    })
+    .filter((candidate) => {
+      if (search.trim() === "") return true;
+
+      return candidate.name.toLowerCase().includes(search.toLowerCase());
+    });
+};
+
+const using = (requestedFields: CandidateRequestedFields) => ({
+  reduce: (candidate: Candidate) =>
+    Object.fromEntries(
+      Object.entries(candidate).filter(([key]) =>
+        requestedFields?.includes(key as CandidateField)
+      )
+    ),
+});

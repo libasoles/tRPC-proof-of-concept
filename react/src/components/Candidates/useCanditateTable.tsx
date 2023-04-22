@@ -17,12 +17,13 @@ const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (candida
     search: "",
   });
 
+  const { data, status } = trpc.candidates.all.useQuery({ filters, requestedFields, pageNumber: currentPage })
+
   const filterResults = useCallback((name: string, value: unknown) => {
     setCurrentPage(1)
+    // TODO: debounce
     setFilters((filters) => ({ ...filters, [name]: value }))
   }, [])
-
-  const { data, status } = trpc.candidates.all.useQuery({ filters, requestedFields, pageNumber: currentPage })
 
   useEffect(() => {
     setCandidates(data?.candidates || []);
