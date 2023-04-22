@@ -1,5 +1,5 @@
 import type { Candidate, CandidateField, Reason } from "../../../../trpc/types";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import dayjs from 'dayjs'
 import { Column, useTable } from "react-table"
 import { trpc } from "../../api";
@@ -11,10 +11,19 @@ const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (candida
 
   const [candidates, setCandidates] = useState<Partial<Candidate>[]>([]);
   const [numberOfRecords, setNumberOfRecords] = useState(0);
-
   const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({
+    onlyApproved: false,
+    search: "",
+  });
 
-  const { data, status } = trpc.candidates.all.useQuery({ requestedFields, pageNumber: currentPage })
+  const filterResults = useCallback((name: string, value: unknown) => {
+    setCurrentPage(1)
+    setFilters((filters) => ({ ...filters, [name]: value }))
+  }, [])
+
+
+  const { data, status } = trpc.candidates.all.useQuery({ filters, requestedFields, pageNumber: currentPage })
 
   useEffect(() => {
     setCandidates(data?.candidates || []);
@@ -68,6 +77,7 @@ const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (candida
     numberOfRecords,
     currentPage,
     setCurrentPage,
+    filterResults,
     ...useTable<Partial<Candidate>>({
       columns,
       data: candidates,

@@ -7,6 +7,10 @@ import { CandidateRequestedFields } from "./candidate.types";
 const numberOfRecordsPerPage = 10;
 
 type QueryAllParams = {
+  filters: {
+    onlyApproved: boolean;
+    search: string;
+  };
   requestedFields?: CandidateRequestedFields;
   pageNumber?: number;
 };
@@ -17,11 +21,14 @@ type RejectParams = {
 };
 
 export default {
-  all: ({ requestedFields, pageNumber }: QueryAllParams) => {
+  all: ({ filters, requestedFields, pageNumber = 1 }: QueryAllParams) => {
+    const offset = pageNumber - 1;
+
     // TODO: inject repository
     const { results, numberOfRecords } = candidateRepository.all(
+      filters,
       requestedFields,
-      pageNumber,
+      offset,
       numberOfRecordsPerPage
     );
 

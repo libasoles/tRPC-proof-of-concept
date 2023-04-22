@@ -9,6 +9,7 @@ import "./Candidates.css";
 
 type Props = { enabledColumns: EnabledColumns }
 
+// TODO: extract part of this logic to a hook
 export const Candidates = ({ enabledColumns }: Props) => {
   const [displayReasons, setDisplayReasons] = useState(false)
   const [preselectedReasons, setPreselectedReasons] = useState<number[]>([])
@@ -65,6 +66,7 @@ export const Candidates = ({ enabledColumns }: Props) => {
     prepareRow,
     currentPage,
     setCurrentPage,
+    filterResults
   } = useCanditateTable(enabledColumns, onAddReason)
 
   if (status === 'error')
@@ -72,8 +74,21 @@ export const Candidates = ({ enabledColumns }: Props) => {
 
   return (
     <div className="content">
+      <form>
+        <div className="filters">
+          <div className="filter">
+            <input type="text" placeholder="Buscar..." />
+          </div>
+          <div className="filter">
+            <label htmlFor="filter-status">
+              <input type="checkbox" id="filter-status" onChange={(e) => filterResults("onlyApproved", e.currentTarget.checked)} />
+              <span>Solo aprobados</span>
+            </label>
+          </div>
+        </div>
+      </form>
       {(status === 'loading') && <div className="loading"><span>Cargando...</span></div>}
-      {/* TODO: make first column static and table scrollable */}
+      {/* TODO: maybe make first column static and table scrollable */}
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
@@ -105,13 +120,15 @@ export const Candidates = ({ enabledColumns }: Props) => {
         setCurrentPage={setCurrentPage}
         totalRows={numberOfRecords} rowsPerPage={10} />
 
-      {displayReasons && createPortal(
-        <RejectionReasons
-          preselectedReasons={preselectedReasons}
-          onSelectReason={onSelectReason}
-          onClose={onClose}
-        />
-        , document.body)}
-    </div>
+      {
+        displayReasons && createPortal(
+          <RejectionReasons
+            preselectedReasons={preselectedReasons}
+            onSelectReason={onSelectReason}
+            onClose={onClose}
+          />
+          , document.body)
+      }
+    </div >
   );
 };

@@ -15,6 +15,38 @@
   padding: 0 10px;
 }
 
+form {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+}
+
+input[type="text"] {
+  padding: 5px;
+  margin: 2px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 240px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+}
+
+.filter {
+  width: fit-content;
+}
+
+.filter label {
+  display: flex;
+  align-items: center;
+}
+
 table {
   height: 100%;
   width: 100%;

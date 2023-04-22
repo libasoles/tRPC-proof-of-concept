@@ -16,8 +16,10 @@ export type Candidate = {
   accepts_working_hours: boolean;
   desired_salary: number;
   had_interview: boolean;
-  reason: number[];
+  reason: number[]; // TODO: rename to reasons
 };
+
+type Filter = (candidate: Candidate) => boolean;
 
 class Candidates {
   store: Candidate[] = [
@@ -1418,9 +1420,19 @@ class Candidates {
     },
   ];
 
+  _filter: Filter | undefined;
+
+  filter(filter: Filter) {
+    this._filter = filter;
+
+    return this;
+  }
+
   list() {
+    const results = this._filter ? this.store.filter(this._filter) : this.store;
+
     // TODO: sort could be parametized
-    return this.store.sort((a, b) =>
+    return results.sort((a, b) =>
       (a.name as string).localeCompare(b.name as string)
     );
   }

@@ -3,7 +3,7 @@ import "./Pagination.css";
 
 // @ts-ignore
 const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }) => {
-    const numberOfPages = Math.floor(totalRows / rowsPerPage);
+    const numberOfPages = Math.ceil(totalRows / rowsPerPage);
 
     const pages = [...new Array(numberOfPages)];
 

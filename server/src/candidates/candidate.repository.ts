@@ -12,10 +12,24 @@ const using = (requestedFields: CandidateRequestedFields) => ({
 });
 
 export default {
-  all: (requestedFields?: CandidateRequestedFields, offset = 0, limit = 10) => {
+  all: (
+    filters = {
+      onlyApproved: false,
+      search: "",
+    },
+    requestedFields?: CandidateRequestedFields,
+    offset = 0,
+    limit = 10
+  ) => {
     const start = offset * limit;
+    const { onlyApproved, search } = filters;
 
     const results = candidates
+      .filter((candidate) => {
+        if (!onlyApproved) return true;
+
+        return candidate.reason.length === 0;
+      })
       .slice(start, limit)
       // @ts-ignore
       .map((candidate) => using(requestedFields).reduce(candidate));

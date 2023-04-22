@@ -5,6 +5,10 @@ import { z } from "zod";
 function validateListParameters() {
   return z
     .object({
+      filters: z.object({
+        onlyApproved: z.boolean().optional(),
+        search: z.string().optional(),
+      }),
       requestedFields: z.array(z.string()).optional(),
       pageNumber: z.number().optional(),
     })
