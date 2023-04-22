@@ -4,10 +4,10 @@ import useCanditateTable, { EnabledColumns } from "@/components/Candidates/useCa
 import { createPortal } from "react-dom";
 import RejectionReasons from "@/components/Candidates/RejectionReasons";
 import { queryClient, trpc } from "@/api";
-import { Candidate } from "../../../trpc/types";
+import { Candidate } from "#/types";
 import "./Candidates.css";
 
-type Props = { enabledColumns: EnabledColumns }
+type Props = { enabledColumns: Partial<EnabledColumns> }
 
 // TODO: extract part of this logic to a hook
 const Candidates = ({ enabledColumns }: Props) => {
@@ -102,7 +102,7 @@ const Candidates = ({ enabledColumns }: Props) => {
             </tr>
           ))}
         </thead>
-        <tbody {...getTableBodyProps()}>
+        <tbody {...getTableBodyProps()} data-testid="table-body">
           {
             rows.map((row, i) => {
               prepareRow(row)

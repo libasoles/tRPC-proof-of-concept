@@ -6,7 +6,7 @@ import { trpc } from "../../api";
 
 export type EnabledColumns = Record<CandidateField, boolean>
 
-const useCanditateTable = (enabledColumns: EnabledColumns, onAddReason: (candidate: Candidate) => void) => {
+const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason: (candidate: Candidate) => void) => {
   const requestedFields: string[] = useMemo(() => Object.entries(enabledColumns).filter(([_, value]) => value).map(([key, _]) => key), [enabledColumns])
 
   const [candidates, setCandidates] = useState<Partial<Candidate>[]>([]);

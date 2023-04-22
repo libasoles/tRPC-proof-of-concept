@@ -14,6 +14,7 @@ const config = {
   testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^#/(.*)$": "<rootDir>/../trpc/$1",
   },
 };
 
