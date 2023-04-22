@@ -3,17 +3,18 @@ import { Routes, Route } from "react-router-dom";
 import { Candidates } from "./pages/Candidates";
 import { Assignment } from "./pages/Assignment";
 import { Layout } from "./components/Layout";
+import { Paths } from "@/paths";
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path={Paths.Home} element={<Layout />}>
         <Route
           index
           element={<Assignment />}
         />
         <Route
-          path="candidates"
+          path={Paths.Candidates}
           element={<Candidates enabledColumns={enabledColumns} />}
         />
       </Route>

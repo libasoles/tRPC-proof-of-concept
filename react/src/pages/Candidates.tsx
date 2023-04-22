@@ -74,19 +74,22 @@ export const Candidates = ({ enabledColumns }: Props) => {
 
   return (
     <div className="content">
-      <form>
-        <div className="filters">
-          <div className="filter">
-            <input type="text" placeholder="Buscar por nombre..." onKeyUp={(e) => filterResults("search", e.currentTarget.value)} />
+      <div className="section-header">
+        <h1>Candidatos</h1>
+        <form>
+          <div className="filters">
+            <div className="filter">
+              <input type="text" placeholder="Buscar por nombre..." onKeyUp={(e) => filterResults("search", e.currentTarget.value)} />
+            </div>
+            <div className="filter">
+              <label htmlFor="filter-status">
+                <input type="checkbox" id="filter-status" onChange={(e) => filterResults("onlyApproved", e.currentTarget.checked)} />
+                <span>Solo aprobados</span>
+              </label>
+            </div>
           </div>
-          <div className="filter">
-            <label htmlFor="filter-status">
-              <input type="checkbox" id="filter-status" onChange={(e) => filterResults("onlyApproved", e.currentTarget.checked)} />
-              <span>Solo aprobados</span>
-            </label>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
       {(status === 'loading') && <div className="loading"><span>Cargando...</span></div>}
       {/* TODO: maybe make first column static and table scrollable */}
       <table {...getTableProps()}>

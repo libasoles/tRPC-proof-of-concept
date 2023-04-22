@@ -1,21 +1,28 @@
 import { NavLink, Outlet } from "react-router-dom";
 import "./Layout.css"
+import { Paths } from "@/paths";
 
-export const Layout = () => {
+type Props = {
+    paths?: typeof Paths
+};
+
+export const Layout = ({ paths = Paths }: Props) => {
     return (
         <>
             <nav>
                 <ul>
                     <li>
-                        <NavLink to="/">Home</NavLink>
+                        <NavLink to={paths.Home}>Home</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/candidates">Candidates</NavLink>
+                        <NavLink to={paths.Candidates}>Candidates</NavLink>
                     </li>
                 </ul>
             </nav>
             <hr />
-            <Outlet />
+            <main>
+                <Outlet />
+            </main>
         </>
     );
 };

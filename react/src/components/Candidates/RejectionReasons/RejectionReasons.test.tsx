@@ -23,6 +23,7 @@ const reasons = [
 
 describe("RejectionReasons", () => {
     beforeEach(() => {
+        // @ts-ignore
         trpc.rejectionReasons.all.useQuery.mockReturnValue({ data: reasons });
     });
 
