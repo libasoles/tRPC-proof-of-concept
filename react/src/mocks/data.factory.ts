@@ -1,4 +1,5 @@
 import { Candidate } from "#/types";
+import { notAGoodFit } from "./mock.data";
 
 function generateRandomId() {
   return Math.random().toString(36).substr(2, 10);
@@ -20,24 +21,14 @@ export function createCandidate(values?: Partial<Candidate>) {
     location: "Ituzaingó, Buenos Aires Province, Argentina",
     desired_salary: 12000,
     reason: [
-      { id: 4, description: "No estudia/o carreras deseadas" },
-      { id: 6, description: "Edad fuera de rango" },
-      { id: 3, description: "Ubicación" },
+      {
+        id: 1,
+        description: "Not a good fit",
+      },
     ],
     ...values,
-  };
+  } as Candidate;
 }
-
-export const aRejectedCandidate = createCandidate({
-  id: "5a271a1368adf47eb31fe683",
-  name: "Aiden Armstrong",
-});
-
-export const anApprovedCandidate = createCandidate({
-  id: "59865cf7c976ad2b78023669",
-  name: "Aiden Moss",
-  reason: [],
-});
 
 export const createCandidates = (number: number) => {
   return Array.from({ length: number }, (_) => createCandidate());

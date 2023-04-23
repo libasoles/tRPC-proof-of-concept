@@ -1,8 +1,8 @@
-import type { Candidate, CandidateField, Reason } from "../../../../trpc/types";
+import type { Candidate, CandidateField, Reason } from "#/types";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import dayjs from 'dayjs'
 import { Column, useTable } from "react-table"
-import { trpc } from "../../api";
+import { trpc } from "@/api";
 
 export type EnabledColumns = Record<CandidateField, boolean>
 
@@ -61,7 +61,7 @@ const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason:
         Header: "Razones", accessor: "reason", Cell: ({ value, row }) =>
           <div className="pills">
             {formatReasons(value)}
-            <button className="add-button" onClick={() => onAddReason(row.original)}>Editar</button>
+            <button data-testid="edit-reasons-button" name="edit-reasons" className="add-button" onClick={() => onAddReason(row.original)}>Editar</button>
           </div>
       },
     ].filter(column => requestedFields.includes(column.accessor as string))
@@ -102,7 +102,7 @@ function formatMoney(value: boolean) {
 }
 
 function formatReasons(values: Reason[]) {
-  return values.map(value => <span key={value.id} className="pill">{value.description}</span>);
+  return values.map(value => <span key={value.id} className="pill" data-testid="rejection-reason">{value.description}</span>);
 }
 
 export default useCanditateTable;

@@ -1,31 +1,14 @@
 import { createTRPCMsw } from "msw-trpc";
-import { AppRouter } from "#/types";
+import { AppRouter, Reason } from "#/types";
+import { createCandidates } from "./data.factory";
 import {
   aRejectedCandidate,
   anApprovedCandidate,
-  createCandidates,
-} from "./testFactory";
-import { rowsPerPage } from "@/config";
+  rejectionReasons,
+} from "./mock.data";
+import { fakeServer } from "./fake.server";
 
 export const trpcMsw = createTRPCMsw<AppRouter>();
-
-const mockResponse = {
-  candidates: createCandidates(rowsPerPage),
-  numberOfRecords: 10,
-};
-
-const mockErrorResponse = {
-  error: {
-    message: "Ups",
-    code: -32603,
-    data: {
-      code: "INTERNAL_SERVER_ERROR",
-      httpStatus: 500,
-      stack: "Error: Ups",
-      path: "candidates.all",
-    },
-  },
-};
 
 export const handlers = [
   trpcMsw.candidates.all.query((req, res, ctx) => {
@@ -46,7 +29,7 @@ export const handlers = [
       return res(
         ctx.status(200),
         ctx.data({
-          ...mockResponse,
+          ...fakeServer.mockResponse,
           numberOfRecords: 12,
         })
       );
@@ -56,25 +39,44 @@ export const handlers = [
       return res(
         ctx.status(200),
         ctx.data({
-          candidates: [aRejectedCandidate],
+          candidates: [fakeServer.candidate(aRejectedCandidate.id)],
           numberOfRecords: 1,
         })
       );
     }
 
     if (search === "fail")
-      return res(ctx.status(500), ctx.json(mockErrorResponse));
+      return res(ctx.status(500), ctx.json(fakeServer.mockErrorResponse));
 
     if (onlyApproved) {
       return res(
         ctx.status(200),
         ctx.data({
-          candidates: [anApprovedCandidate],
+          candidates: [fakeServer.candidate(anApprovedCandidate.id)],
           numberOfRecords: 1,
         })
       );
     }
 
-    return res(ctx.status(200), ctx.data(mockResponse));
+    return res(ctx.status(200), ctx.data(fakeServer.mockResponse));
+  }),
+
+  trpcMsw.rejectionReasons.all.query((req, res, ctx) => {
+    return res(ctx.status(200), ctx.data(rejectionReasons));
+  }),
+
+  trpcMsw.candidates.updateReasons.mutation((req, res, ctx) => {
+    const reasons = req.body.reasonIds.map((id: number) =>
+      rejectionReasons.find((reason) => reason.id === id)
+    );
+
+    const updatedCandidate = {
+      ...aRejectedCandidate,
+      reason: reasons as Reason[],
+    };
+
+    fakeServer.updateCandidate(updatedCandidate);
+
+    return res(ctx.status(200), ctx.data(updatedCandidate));
   }),
 ];

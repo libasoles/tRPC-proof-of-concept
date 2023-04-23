@@ -28,7 +28,7 @@ describe("RejectionReasons", () => {
     });
 
     afterEach(() => {
-        jest.resetAllMocks();
+        jest.clearAllMocks()
     });
 
     it("renders the list of reasons", () => {

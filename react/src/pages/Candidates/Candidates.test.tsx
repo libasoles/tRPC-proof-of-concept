@@ -5,6 +5,8 @@ import { handlers } from '@/mocks/trpc.handlers';
 import { trpc, trpcClient, queryClient } from "@/api";
 import { QueryClientProvider } from "@tanstack/react-query";
 import userEvent from '@testing-library/user-event';
+import { notAGoodFit, notInterested } from '@/mocks/mock.data';
+import { fakeServer } from '@/mocks/fake.server';
 
 export const enabledColumns = {
   name: true,
@@ -21,6 +23,7 @@ describe('Candidates', () => {
 
   afterEach(() => {
     server.resetHandlers()
+    fakeServer.reset()
   });
 
   function renderComponent() {
@@ -162,6 +165,58 @@ describe('Candidates', () => {
   //     expect(errorMessage).toBeInTheDocument();
   //   })
   // })
+
+  describe('Reasons', () => {
+    // test('renders a modal with the reasons when clicking on the reasons button', async () => {
+    //   renderComponent();
+
+    //   filterOnlyApprovedCandidates()
+
+    //   await waitUntilResultsRender()
+
+    //   clickEditReasonsButtonForRow(0)
+
+    //   const modal = await screen.findByRole('dialog');
+    //   const reasons = await within(modal).findByText(/Not a good fit/i);
+
+    //   expect(modal).toBeInTheDocument();
+    //   expect(reasons).toBeInTheDocument();
+    // });
+
+    test('updates the reasons in the table when the modal is closed', async () => {
+      const aCandidateRow = 0;
+
+      renderComponent();
+
+      write('Armstrong')
+
+      await waitUntilResultsRender()
+
+      assertNumberOfRejectionReasonsForRowIs(aCandidateRow, 1)
+
+      clickEditReasonsButtonForRow(aCandidateRow)
+
+      const modal = await screen.findByRole('dialog');
+      const reasonCheckbox = await within(modal).findByLabelText(notInterested.description);
+
+      // eslint-disable-next-line testing-library/no-unnecessary-act
+      act(() => userEvent.click(reasonCheckbox))
+
+      await waitFor(() => { expect(reasonCheckbox).toBeChecked() })
+
+      assertNumberOfRejectionReasonsForRowIs(aCandidateRow, 1)
+
+      closeModal()
+
+      await waitFor(() => {
+        assertNumberOfRejectionReasonsForRowIs(aCandidateRow, 2)
+        assertCandidateHasReason(aCandidateRow, notAGoodFit.description)
+        assertCandidateHasReason(aCandidateRow, notInterested.description)
+      })
+    })
+  })
+
+  // TODO: test data columns format (boolenas, date, etc)
 })
 
 function write(text: string) {
@@ -180,4 +235,61 @@ function filterOnlyApprovedCandidates() {
   const statusCheckbox = screen.getByLabelText(/solo aprobados/i);
   // eslint-disable-next-line testing-library/no-unnecessary-act
   act(() => userEvent.click(statusCheckbox));
+}
+
+function getRow(row: number) {
+  const tbodyElement = screen.getByTestId('table-body');
+  const rows = within(tbodyElement).getAllByRole('row');
+
+  return rows[row];
+}
+
+function getRejectionReasons(rowNumber: number) {
+  const aRow = getRow(rowNumber);
+
+  return within(aRow).getAllByTestId('rejection-reason')
+}
+
+function assertNumberOfRejectionReasonsForRowIs(rowNumber: number, expected: number) {
+  const reasons = getRejectionReasons(rowNumber)
+
+  expect(reasons).toHaveLength(expected);
+}
+
+function clickEditReasonsButtonForRow(row: number) {
+  const aRow = getRow(row);
+  const reasonsButton = within(aRow).getByTestId('edit-reasons-button');
+
+  // eslint-disable-next-line testing-library/no-unnecessary-act
+  act(() => userEvent.click(reasonsButton));
+}
+
+async function waitUntilResultsRender() {
+  const loading = await screen.findByText(/Cargando.../i);
+  expect(loading).toBeInTheDocument();
+
+  await waitFor(() => {
+    expect(loading).not.toBeInTheDocument();
+  })
+
+  return waitFor(() => {
+    const tbodyElement = screen.getByTestId('table-body');
+    const rows = within(tbodyElement).getAllByRole('row');
+    expect(rows.length).toBeGreaterThan(0);
+  })
+}
+
+function closeModal() {
+  const modal = screen.getByRole('dialog');
+  const closeButton = within(modal).getByRole('button');
+
+  // eslint-disable-next-line testing-library/no-unnecessary-act
+  act(() => userEvent.click(closeButton));
+}
+
+function assertCandidateHasReason(row: number, reason: string) {
+  const reasons = getRejectionReasons(row);
+  const hasReason = reasons.some((reasonElement) => reasonElement.textContent === reason)
+
+  expect(hasReason).toBe(true);
 }
