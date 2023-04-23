@@ -17,12 +17,15 @@ export const enabledColumns = {
 
 export const server = setupServer(...handlers);
 
+const aCandidateRow = 0;
+
 describe('Candidates', () => {
   beforeAll(() => server.listen());
   afterAll(() => server.close());
 
   afterEach(() => {
     server.resetHandlers()
+    queryClient.clear();
     fakeServer.reset()
   });
 
@@ -82,32 +85,19 @@ describe('Candidates', () => {
   it('renders 10 rows based on rows per page limit', async () => {
     renderComponent()
 
-    const tbodyElement = await screen.findByTestId('table-body');
-
-    await waitFor(() => {
-      const rows = within(tbodyElement).getAllByRole('row');
-      expect(rows).toHaveLength(10);
-    })
+    await assertTableHasNumberOfRows(10)
   });
 
   test('filters candidates by name', async () => {
     renderComponent();
-    const tbodyElement = await screen.findByTestId('table-body');
-    const rows = within(tbodyElement).getAllByRole('row');
 
-    await waitFor(() => {
-      expect(rows).toHaveLength(10);
-    })
+    await assertTableHasNumberOfRows(10)
 
     write('Armstrong')
 
-    await waitFor(() => {
-      const rows = within(tbodyElement).getAllByRole('row');
-      expect(rows).toHaveLength(1);
-    })
+    await assertTableHasNumberOfRows(1)
 
-    const match = screen.getByText(/Armstrong/i);
-    expect(match).toBeInTheDocument();
+    assertCandidateIsListed('Armstrong');
   });
 
   test('filters candidates by status', async () => {
@@ -142,20 +132,14 @@ describe('Candidates', () => {
 
     write('lots')
 
-    const tbodyElement = await screen.findByTestId('table-body');
-    const rows = await within(tbodyElement).findAllByRole('row');
-    expect(rows).toHaveLength(10);
+    await assertTableHasNumberOfRows(10)
 
     navigateToPage(2)
 
-    await waitFor(() => {
-      const rows = within(tbodyElement).getAllByRole('row');
-      expect(rows).toHaveLength(2);
-    })
+    await assertTableHasNumberOfRows(2)
   });
 
-
-  // it.only('displays an error message when the request fails', async () => {
+  // it('displays an error message when the request fails', async () => {
   //   renderComponent();
 
   //   write('fail')
@@ -163,28 +147,27 @@ describe('Candidates', () => {
   //   await waitFor(() => {
   //     const errorMessage = screen.getByText(/Hubo un error cargando el listado/i);
   //     expect(errorMessage).toBeInTheDocument();
-  //   })
+  //   }, { timeout: 4000 })
   // })
 
   describe('Reasons', () => {
-    // test('renders a modal with the reasons when clicking on the reasons button', async () => {
-    //   renderComponent();
+    test('renders a modal with the reasons when clicking on the reasons button', async () => {
+      renderComponent();
 
-    //   filterOnlyApprovedCandidates()
+      filterOnlyApprovedCandidates()
 
-    //   await waitUntilResultsRender()
+      await waitUntilResultsRender()
 
-    //   clickEditReasonsButtonForRow(0)
+      clickEditReasonsButtonForRow(aCandidateRow)
 
-    //   const modal = await screen.findByRole('dialog');
-    //   const reasons = await within(modal).findByText(/Not a good fit/i);
+      const modal = await screen.findByRole('dialog');
+      const reasons = await within(modal).findByText(/Not a good fit/i);
 
-    //   expect(modal).toBeInTheDocument();
-    //   expect(reasons).toBeInTheDocument();
-    // });
+      expect(modal).toBeInTheDocument();
+      expect(reasons).toBeInTheDocument();
+    });
 
     test('updates the reasons in the table when the modal is closed', async () => {
-      const aCandidateRow = 0;
 
       renderComponent();
 
@@ -244,26 +227,6 @@ function getRow(row: number) {
   return rows[row];
 }
 
-function getRejectionReasons(rowNumber: number) {
-  const aRow = getRow(rowNumber);
-
-  return within(aRow).getAllByTestId('rejection-reason')
-}
-
-function assertNumberOfRejectionReasonsForRowIs(rowNumber: number, expected: number) {
-  const reasons = getRejectionReasons(rowNumber)
-
-  expect(reasons).toHaveLength(expected);
-}
-
-function clickEditReasonsButtonForRow(row: number) {
-  const aRow = getRow(row);
-  const reasonsButton = within(aRow).getByTestId('edit-reasons-button');
-
-  // eslint-disable-next-line testing-library/no-unnecessary-act
-  act(() => userEvent.click(reasonsButton));
-}
-
 async function waitUntilResultsRender() {
   const loading = await screen.findByText(/Cargando.../i);
   expect(loading).toBeInTheDocument();
@@ -279,6 +242,18 @@ async function waitUntilResultsRender() {
   })
 }
 
+async function assertTableHasNumberOfRows(expected: number) {
+  const tbodyElement = await screen.findByTestId('table-body');
+  const rows = await within(tbodyElement).findAllByRole('row');
+  expect(rows).toHaveLength(expected);
+}
+
+function assertCandidateIsListed(name: string) {
+  const regex = new RegExp(name, 'i');
+  const match = screen.getByText(regex);
+  expect(match).toBeInTheDocument();
+}
+
 function closeModal() {
   const modal = screen.getByRole('dialog');
   const closeButton = within(modal).getByRole('button');
@@ -287,9 +262,29 @@ function closeModal() {
   act(() => userEvent.click(closeButton));
 }
 
+function getRejectionReasons(rowNumber: number) {
+  const aRow = getRow(rowNumber);
+
+  return within(aRow).getAllByTestId('rejection-reason')
+}
+
 function assertCandidateHasReason(row: number, reason: string) {
   const reasons = getRejectionReasons(row);
   const hasReason = reasons.some((reasonElement) => reasonElement.textContent === reason)
 
   expect(hasReason).toBe(true);
+}
+
+function assertNumberOfRejectionReasonsForRowIs(rowNumber: number, expected: number) {
+  const reasons = getRejectionReasons(rowNumber)
+
+  expect(reasons).toHaveLength(expected);
+}
+
+function clickEditReasonsButtonForRow(row: number) {
+  const aRow = getRow(row);
+  const reasonsButton = within(aRow).getByTestId('edit-reasons-button');
+
+  // eslint-disable-next-line testing-library/no-unnecessary-act
+  act(() => userEvent.click(reasonsButton));
 }
