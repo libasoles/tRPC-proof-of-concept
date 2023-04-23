@@ -7,6 +7,7 @@ import { queryClient, trpc } from "@/api";
 import { Candidate } from "#/types";
 import "./Candidates.css";
 import { rowsPerPage } from "@/config";
+import { getQueryKey } from "@trpc/react-query";
 
 type Props = { enabledColumns: Partial<EnabledColumns> }
 
@@ -44,17 +45,7 @@ const Candidates = ({ enabledColumns }: Props) => {
 
     setDisplayReasons(false)
 
-    // TODO: not working
-    queryClient.invalidateQueries(['candidates', 'all'])
-    queryClient.invalidateQueries(['candidates.all'])
-
-    const queryCache = queryClient.getQueryCache();
-    const queries = queryCache.findAll();
-
-    // TODO: too much. Only invalidate the candidates.all query
-    queries.forEach((query) => {
-      queryClient.invalidateQueries(query.queryKey);
-    });
+    queryClient.invalidateQueries(getQueryKey(trpc.candidates.all))
   }, [])
 
   const {
