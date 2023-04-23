@@ -14,10 +14,11 @@ export function createCandidate(values?: Partial<Candidate>) {
       "https://www.zonajobs.com.ar/empresas/postulaciones/cvDetailsNewTab?idPostulacion=288288001&idCv=2292352&idAviso=1787875&mostrarSalarioPretendido=false",
     phone: "(603) 379-4036",
     email: "bulinad@ewgatna.org",
-    date: " 2017-12-05 19:21:27.555000",
+    date: "2017-12-05 19:21:27.555000",
     age: 26,
     career: "moreInfo",
     courses_approved: "16 a 21",
+    had_interview: true,
     location: "Ituzaingó, Buenos Aires Province, Argentina",
     desired_salary: 12000,
     reason: [

@@ -2,6 +2,7 @@ import { createTRPCMsw } from "msw-trpc";
 import { AppRouter, Reason } from "#/types";
 import { createCandidates } from "./data.factory";
 import {
+  aCandidateThatWasntInterviewed,
   aRejectedCandidate,
   anApprovedCandidate,
   rejectionReasons,
@@ -40,6 +41,16 @@ export const handlers = [
         ctx.status(200),
         ctx.data({
           candidates: [fakeServer.candidate(aRejectedCandidate.id)],
+          numberOfRecords: 1,
+        })
+      );
+    }
+
+    if (search === "Harold") {
+      return res(
+        ctx.status(200),
+        ctx.data({
+          candidates: [fakeServer.candidate(aCandidateThatWasntInterviewed.id)],
           numberOfRecords: 1,
         })
       );

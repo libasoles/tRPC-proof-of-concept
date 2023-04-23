@@ -86,7 +86,7 @@ const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason:
 }
 
 function formatLink(value: string) {
-  return <a href={value} target="blank">{`🔗 Ver`}</a>;
+  return <a href={value} target="blank">{`🔗 Ver CV`}</a>;
 }
 
 function formatDate(value: string) {

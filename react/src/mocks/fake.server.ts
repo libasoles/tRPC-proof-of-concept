@@ -1,15 +1,26 @@
 import { Candidate } from "#/types";
 import { createCandidates } from "./data.factory";
 import { rowsPerPage } from "@/config";
-import { aRejectedCandidate, anApprovedCandidate } from "./mock.data";
+import {
+  aRejectedCandidate,
+  anApprovedCandidate,
+  aCandidateThatWasntInterviewed,
+} from "./mock.data";
+
+const specialCandidates = [
+  anApprovedCandidate,
+  aRejectedCandidate,
+  aCandidateThatWasntInterviewed,
+];
+
+const candidates = [
+  ...createCandidates(rowsPerPage - specialCandidates.length),
+  ...specialCandidates,
+];
 
 class FakeServer {
   private pristineMockResponse = {
-    candidates: [
-      ...createCandidates(rowsPerPage - 2),
-      anApprovedCandidate,
-      aRejectedCandidate,
-    ],
+    candidates,
     numberOfRecords: 10,
   };
 

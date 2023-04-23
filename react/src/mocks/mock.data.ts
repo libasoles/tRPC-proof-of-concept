@@ -30,6 +30,13 @@ export const rejectionReasons = [
 export const aRejectedCandidate = createCandidate({
   id: "5a271a1368adf47eb31fe683",
   name: "Aiden Armstrong",
+  date: "2021-01-01 19:21:27.555000",
+});
+
+export const aCandidateThatWasntInterviewed = createCandidate({
+  id: "5gh6d1368adf47eb313sg702",
+  name: "Harold Watson",
+  had_interview: false,
 });
 
 export const anApprovedCandidate = createCandidate({

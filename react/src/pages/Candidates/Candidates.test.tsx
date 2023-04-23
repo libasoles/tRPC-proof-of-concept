@@ -7,9 +7,12 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import userEvent from '@testing-library/user-event';
 import { notAGoodFit, notInterested } from '@/mocks/mock.data';
 import { fakeServer } from '@/mocks/fake.server';
+import { format } from 'path';
 
 export const enabledColumns = {
   name: true,
+  date: true,
+  cv_zonajobs: true,
   had_interview: true,
   email: false,
   reason: true,
@@ -17,7 +20,7 @@ export const enabledColumns = {
 
 export const server = setupServer(...handlers);
 
-const aCandidateRow = 0;
+const firstRow = 0;
 
 describe('Candidates', () => {
   beforeAll(() => server.listen());
@@ -56,20 +59,6 @@ describe('Candidates', () => {
     expect(pagination).not.toBeInTheDocument();
   });
 
-  test('table headers requested by user are rendered, and other headers are ignored', () => {
-    renderComponent()
-
-    const nameHeader = screen.getByRole('columnheader', { name: /Nombre/i });
-    const interviewedHeader = screen.getByRole('columnheader', { name: /Fue entrevistado/i });
-    const reasonHeader = screen.getByRole('columnheader', { name: /Razones/i });
-    const emailHeader = screen.queryByRole('columnheader', { name: /Email/i });
-
-    expect(nameHeader).toBeInTheDocument();
-    expect(interviewedHeader).toBeInTheDocument();
-    expect(reasonHeader).toBeInTheDocument();
-    expect(emailHeader).not.toBeInTheDocument();
-  })
-
   it('renders a loading message that then dissapears', async () => {
     renderComponent()
 
@@ -80,63 +69,6 @@ describe('Candidates', () => {
     await waitFor(() => {
       expect(loading).not.toBeInTheDocument();
     })
-  });
-
-  it('renders 10 rows based on rows per page limit', async () => {
-    renderComponent()
-
-    await assertTableHasNumberOfRows(10)
-  });
-
-  test('filters candidates by name', async () => {
-    renderComponent();
-
-    await assertTableHasNumberOfRows(10)
-
-    write('Armstrong')
-
-    await assertTableHasNumberOfRows(1)
-
-    assertCandidateIsListed('Armstrong');
-  });
-
-  test('filters candidates by status', async () => {
-    renderComponent();
-
-    filterOnlyApprovedCandidates()
-
-    await waitFor(() => {
-      const tbodyElement = screen.getByTestId('table-body');
-      const rows = within(tbodyElement).getAllByRole('row');
-      expect(rows).toHaveLength(1);
-    })
-
-    const match = screen.getByText(/Moss/i);
-    expect(match).toBeInTheDocument();
-  });
-
-  test("renders pagination when there are more than 10 rows", async () => {
-    renderComponent();
-
-    write('lots')
-
-    const content = await screen.findByTestId('candidates-page');
-    await waitFor(() => {
-      const pagination = within(content).getByRole('navigation');
-      expect(pagination).toBeInTheDocument();
-    })
-  });
-
-  test("renders the correct number of rows when changing page", async () => {
-    renderComponent();
-
-    write('lots')
-
-    await assertTableHasNumberOfRows(10)
-
-    navigateToPage(2)
-
-    await assertTableHasNumberOfRows(2)
   });
 
   it('displays an error message when the request fails', async () => {
@@ -156,7 +88,133 @@ describe('Candidates', () => {
     })
   })
 
-  describe('Reasons', () => {
+  describe("Filters", () => {
+    test('filters candidates by name', async () => {
+      renderComponent();
+
+      await assertTableHasNumberOfRows(10)
+
+      write('Armstrong')
+
+      await assertTableHasNumberOfRows(1)
+
+      assertCandidateIsListed('Armstrong');
+    });
+
+    test('filters candidates by status', async () => {
+      renderComponent();
+
+      filterOnlyApprovedCandidates()
+
+      await waitFor(() => {
+        const tbodyElement = screen.getByTestId('table-body');
+        const rows = within(tbodyElement).getAllByRole('row');
+        expect(rows).toHaveLength(1);
+      })
+
+      const match = screen.getByText(/Moss/i);
+      expect(match).toBeInTheDocument();
+    });
+  })
+
+  describe("Table", () => {
+    test('table headers requested by user are rendered, and other headers are ignored', () => {
+      renderComponent()
+
+      const nameHeader = screen.getByRole('columnheader', { name: /Nombre/i });
+      const interviewedHeader = screen.getByRole('columnheader', { name: /Fue entrevistado/i });
+      const reasonHeader = screen.getByRole('columnheader', { name: /Razones/i });
+
+      expect(nameHeader).toBeInTheDocument();
+      expect(interviewedHeader).toBeInTheDocument();
+      expect(reasonHeader).toBeInTheDocument();
+
+      const emailHeader = screen.queryByRole('columnheader', { name: /Email/i });
+      expect(emailHeader).not.toBeInTheDocument();
+    })
+
+    it('renders 10 rows based on rows per page limit', async () => {
+      renderComponent()
+
+      await assertTableHasNumberOfRows(10)
+    });
+
+    it("formats the boolean values correctly", async () => {
+      renderComponent();
+
+      await waitUntilResultsRender()
+
+      const aRow = getRow(firstRow)
+      const yes = within(aRow).getByText(/^Si$/i);
+      expect(yes).toBeInTheDocument();
+
+      write("Harold")
+
+      await assertTableHasNumberOfRows(1)
+
+      const updatedRow = getRow(firstRow)
+      const no = await within(updatedRow).findByText(/^No$/i);
+      expect(no).toBeInTheDocument();
+    });
+
+    it("formats the date values correctly", async () => {
+      renderComponent();
+
+      await waitUntilResultsRender()
+
+      write("Armstrong")
+
+      await assertTableHasNumberOfRows(1)
+
+      const aRow = getRow(firstRow)
+      const date = within(aRow).getByText(/^01\/01\/2021$/i);
+
+      expect(date).toBeInTheDocument();
+    });
+
+    it('formats the link values correctly', async () => {
+      renderComponent();
+
+      await waitUntilResultsRender()
+
+      write("Armstrong")
+
+      await assertTableHasNumberOfRows(1)
+
+      const aRow = getRow(firstRow)
+      const link = within(aRow).getByRole('link', { name: /Ver CV$/i });
+
+      expect(link).toBeInTheDocument();
+    });
+  })
+
+  describe("Pagination", () => {
+    test("renders pagination when there are more than 10 rows", async () => {
+      renderComponent();
+
+      write('lots')
+
+      const content = await screen.findByTestId('candidates-page');
+      await waitFor(() => {
+        const pagination = within(content).getByRole('navigation');
+        expect(pagination).toBeInTheDocument();
+      })
+    });
+
+    test("renders the correct number of rows when changing page", async () => {
+      renderComponent();
+
+      write('lots')
+
+      await assertTableHasNumberOfRows(10)
+
+      navigateToPage(2)
+
+      await assertTableHasNumberOfRows(2)
+    });
+  })
+
+  describe('Reason Modal', () => {
     test('renders a modal with the reasons when clicking on the reasons button', async () => {
       renderComponent();
 
@@ -164,7 +222,7 @@ describe('Candidates', () => {
 
       await waitUntilResultsRender()
 
-      clickEditReasonsButtonForRow(aCandidateRow)
+      clickEditReasonsButtonForRow(firstRow)
 
       const modal = await screen.findByRole('dialog');
       const reasons = await within(modal).findByText(/Not a good fit/i);
@@ -174,16 +232,15 @@ describe('Candidates', () => {
     });
 
     test('updates the reasons in the table when the modal is closed', async () => {
-
       renderComponent();
 
       write('Armstrong')
 
       await waitUntilResultsRender()
 
-      assertNumberOfRejectionReasonsForRowIs(aCandidateRow, 1)
+      assertNumberOfRejectionReasonsForRowIs(firstRow, 1)
 
-      clickEditReasonsButtonForRow(aCandidateRow)
+      clickEditReasonsButtonForRow(firstRow)
 
       const modal = await screen.findByRole('dialog');
       const reasonCheckbox = await within(modal).findByLabelText(notInterested.description);
@@ -193,19 +250,17 @@ describe('Candidates', () => {
 
       await waitFor(() => { expect(reasonCheckbox).toBeChecked() })
 
-      assertNumberOfRejectionReasonsForRowIs(aCandidateRow, 1)
+      assertNumberOfRejectionReasonsForRowIs(firstRow, 1)
 
       closeModal()
 
       await waitFor(() => {
-        assertNumberOfRejectionReasonsForRowIs(aCandidateRow, 2)
-        assertCandidateHasReason(aCandidateRow, notAGoodFit.description)
-        assertCandidateHasReason(aCandidateRow, notInterested.description)
+        assertNumberOfRejectionReasonsForRowIs(firstRow, 2)
+        assertCandidateHasReason(firstRow, notAGoodFit.description)
+        assertCandidateHasReason(firstRow, notInterested.description)
       })
     })
   })
-
-  // TODO: test data columns format (boolenas, date, etc)
 })
 
 function write(text: string) {
