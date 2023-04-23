@@ -1,5 +1,4 @@
 import { Candidate } from "#/types";
-import { notAGoodFit } from "./mock.data";
 
 function generateRandomId() {
   return Math.random().toString(36).substr(2, 10);

@@ -1,7 +1,6 @@
-import { Reason } from "#/types";
 import { createCandidate } from "./data.factory";
 
-export const notAGoodFit: Reason = {
+export const notAGoodFit = {
   id: 1,
   description: "Not a good fit",
 };

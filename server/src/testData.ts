@@ -1434,7 +1434,7 @@ export class Candidates {
 
     this.resetFilters();
 
-    // TODO: sort could be parametized
+    // TODO: sort could be parametized to compare numbers, dates, etc.
     return results.sort((a, b) =>
       (a.name as string).localeCompare(b.name as string)
     );

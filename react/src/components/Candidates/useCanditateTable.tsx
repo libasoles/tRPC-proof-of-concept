@@ -31,7 +31,6 @@ const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason:
   }, [data]);
 
   const columns = useMemo<Column<Partial<Candidate>>[]>(
-    // TODO: extract outside the hook?
     () => [
       { Header: "Nombre", accessor: "name" },
       { Header: "DNI", accessor: "document" },

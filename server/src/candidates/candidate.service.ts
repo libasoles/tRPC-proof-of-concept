@@ -3,7 +3,7 @@ import { Candidate as PersistedCandidate, reasons } from "../testData";
 import candidateRepository from "./candidate.repository";
 import { CandidateRequestedFields } from "./candidate.types";
 
-// TODO: move to config file or retrieve from frontend
+// TODO: move to config file
 const numberOfRecordsPerPage = 10;
 
 type QueryAllParams = {

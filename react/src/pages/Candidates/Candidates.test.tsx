@@ -1,13 +1,12 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
-import Candidates from './Candidates';
-import { setupServer } from "msw/node";
-import { handlers } from '@/mocks/trpc.handlers';
-import { trpc, trpcClient, queryClient } from "@/api";
-import { QueryClientProvider } from "@tanstack/react-query";
 import userEvent from '@testing-library/user-event';
+import { setupServer } from "msw/node";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { trpc, trpcClient, queryClient } from "@/api";
 import { notAGoodFit, notInterested } from '@/mocks/mock.data';
+import { handlers } from '@/mocks/trpc.handlers';
 import { fakeServer } from '@/mocks/fake.server';
-import { format } from 'path';
+import Candidates from './Candidates';
 
 export const enabledColumns = {
   name: true,

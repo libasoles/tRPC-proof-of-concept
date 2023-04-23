@@ -1,13 +1,13 @@
 import { createTRPCMsw } from "msw-trpc";
 import { AppRouter, Reason } from "#/types";
 import { createCandidates } from "./data.factory";
+import { fakeServer } from "./fake.server";
 import {
   aCandidateThatWasntInterviewed,
   aRejectedCandidate,
   anApprovedCandidate,
   rejectionReasons,
 } from "./mock.data";
-import { fakeServer } from "./fake.server";
 
 export const trpcMsw = createTRPCMsw<AppRouter>();
 
