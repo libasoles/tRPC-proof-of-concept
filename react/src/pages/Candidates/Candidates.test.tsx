@@ -139,16 +139,22 @@ describe('Candidates', () => {
     await assertTableHasNumberOfRows(2)
   });
 
-  // it('displays an error message when the request fails', async () => {
-  //   renderComponent();
+  it('displays an error message when the request fails', async () => {
+    queryClient.setDefaultOptions({
+      queries: {
+        retry: false,
+      },
+    })
 
-  //   write('fail')
+    renderComponent();
 
-  //   await waitFor(() => {
-  //     const errorMessage = screen.getByText(/Hubo un error cargando el listado/i);
-  //     expect(errorMessage).toBeInTheDocument();
-  //   }, { timeout: 4000 })
-  // })
+    write('fail')
+
+    await waitFor(() => {
+      const errorMessage = screen.getByText(/Hubo un error cargando el listado/i);
+      expect(errorMessage).toBeInTheDocument();
+    })
+  })
 
   describe('Reasons', () => {
     test('renders a modal with the reasons when clicking on the reasons button', async () => {
