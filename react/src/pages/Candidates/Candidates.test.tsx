@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import Candidates from './Candidates';
 import { setupServer } from "msw/node";
-import { handlers } from '@/trpc.handlers';
+import { handlers } from '@/mocks/trpc.handlers';
 import { trpc, trpcClient, queryClient } from "@/api";
 import { QueryClientProvider } from "@tanstack/react-query";
 import userEvent from '@testing-library/user-event';
@@ -33,15 +33,24 @@ describe('Candidates', () => {
     );
   }
 
-  test('renders Candidates component', () => {
+  test('renders page components', async () => {
     renderComponent()
 
     const header = screen.getByRole('heading', { name: /Candidatos/i });
+    const searchInput = screen.getByPlaceholderText('Buscar por nombre...');
+    const onlyApprovedFilter = screen.getByRole('checkbox', { name: /Solo aprobados/i });
+    const table = screen.getByRole('table');
+    const content = screen.getByTestId('candidates-page');
+    const pagination = within(content).queryByRole('navigation');
 
     expect(header).toBeInTheDocument();
+    expect(searchInput).toBeInTheDocument();
+    expect(onlyApprovedFilter).toBeInTheDocument();
+    expect(table).toBeInTheDocument();
+    expect(pagination).not.toBeInTheDocument();
   });
 
-  test('table headers are rendered', () => {
+  test('table headers requested by user are rendered, and other headers are ignored', () => {
     renderComponent()
 
     const nameHeader = screen.getByRole('columnheader', { name: /Nombre/i });
@@ -55,10 +64,10 @@ describe('Candidates', () => {
     expect(emailHeader).not.toBeInTheDocument();
   })
 
-  it('renders a loading state (and then dissapears)', async () => {
+  it('renders a loading message that then dissapears', async () => {
     renderComponent()
 
-    const loading = screen.getByText(/Cargando.../i);
+    const loading = await screen.findByText(/Cargando.../i);
 
     expect(loading).toBeInTheDocument();
 
@@ -67,10 +76,74 @@ describe('Candidates', () => {
     })
   });
 
-  it('renders two rows', async () => {
+  it('renders 10 rows based on rows per page limit', async () => {
     renderComponent()
 
     const tbodyElement = await screen.findByTestId('table-body');
+
+    await waitFor(() => {
+      const rows = within(tbodyElement).getAllByRole('row');
+      expect(rows).toHaveLength(10);
+    })
+  });
+
+  test('filters candidates by name', async () => {
+    renderComponent();
+    const tbodyElement = await screen.findByTestId('table-body');
+    const rows = within(tbodyElement).getAllByRole('row');
+
+    await waitFor(() => {
+      expect(rows).toHaveLength(10);
+    })
+
+    write('Armstrong')
+
+    await waitFor(() => {
+      const rows = within(tbodyElement).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+    })
+
+    const match = screen.getByText(/Armstrong/i);
+    expect(match).toBeInTheDocument();
+  });
+
+  test('filters candidates by status', async () => {
+    renderComponent();
+
+    filterOnlyApprovedCandidates()
+
+    await waitFor(() => {
+      const tbodyElement = screen.getByTestId('table-body');
+      const rows = within(tbodyElement).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+    })
+
+    const match = screen.getByText(/Moss/i);
+    expect(match).toBeInTheDocument();
+  });
+
+  test("renders pagination when there are more than 10 rows", async () => {
+    renderComponent();
+
+    write('lots')
+
+    const content = await screen.findByTestId('candidates-page');
+    await waitFor(() => {
+      const pagination = within(content).getByRole('navigation');
+      expect(pagination).toBeInTheDocument();
+    })
+  });
+
+  test("renders the correct number of rows when changing page", async () => {
+    renderComponent();
+
+    write('lots')
+
+    const tbodyElement = await screen.findByTestId('table-body');
+    const rows = await within(tbodyElement).findAllByRole('row');
+    expect(rows).toHaveLength(10);
+
+    navigateToPage(2)
 
     await waitFor(() => {
       const rows = within(tbodyElement).getAllByRole('row');
@@ -78,30 +151,33 @@ describe('Candidates', () => {
     })
   });
 
-  // test('filters candidates by name', async () => {
+
+  // it.only('displays an error message when the request fails', async () => {
   //   renderComponent();
 
-  //   const searchInput = screen.getByPlaceholderText('Buscar por nombre...');
-
-  //   // eslint ignore next line
-  //   act(() => userEvent.type(searchInput, 'Arm')); // strong
-
-  //   const tbodyElement = await screen.findByTestId('table-body');
+  //   write('fail')
 
   //   await waitFor(() => {
-  //     const rows = within(tbodyElement).getAllByRole('row');
-  //     expect(rows).toHaveLength(1);
+  //     const errorMessage = screen.getByText(/Hubo un error cargando el listado/i);
+  //     expect(errorMessage).toBeInTheDocument();
   //   })
-
-  //   const match = screen.getByText(/Armstrong/i);
-  //   expect(match).toBeInTheDocument();
-  // });
-
-  // test('filters candidates by status', () => {
-  //   render(<Candidates enabledColumns={enabledColumns} />);
-  //   const statusCheckbox = screen.getByLabelText(/solo aprobados/i);
-
-  //   userEvent.click(statusCheckbox);
-
-  // });
+  // })
 })
+
+function write(text: string) {
+  const searchInput = screen.getByPlaceholderText('Buscar por nombre...');
+  // eslint-disable-next-line testing-library/no-unnecessary-act
+  act(() => userEvent.type(searchInput, text));
+}
+
+function navigateToPage(number: number) {
+  const page = screen.getByRole('button', { name: String(number) });
+  // eslint-disable-next-line testing-library/no-unnecessary-act
+  act(() => userEvent.click(page));
+}
+
+function filterOnlyApprovedCandidates() {
+  const statusCheckbox = screen.getByLabelText(/solo aprobados/i);
+  // eslint-disable-next-line testing-library/no-unnecessary-act
+  act(() => userEvent.click(statusCheckbox));
+}

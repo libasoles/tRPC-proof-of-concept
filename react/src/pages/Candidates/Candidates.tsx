@@ -6,6 +6,7 @@ import RejectionReasons from "@/components/Candidates/RejectionReasons";
 import { queryClient, trpc } from "@/api";
 import { Candidate } from "#/types";
 import "./Candidates.css";
+import { rowsPerPage } from "@/config";
 
 type Props = { enabledColumns: Partial<EnabledColumns> }
 
@@ -73,7 +74,7 @@ const Candidates = ({ enabledColumns }: Props) => {
     return <div className="error">Hubo un error cargando el listado. Intenta recargando la pagina.</div>
 
   return (
-    <div className="content">
+    <div className="content" data-testid="candidates-page">
       <div className="section-header">
         <h1>Candidatos</h1>
         <form>
@@ -121,7 +122,9 @@ const Candidates = ({ enabledColumns }: Props) => {
       <Pagination
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        totalRows={numberOfRecords} rowsPerPage={10} />
+        totalRows={numberOfRecords}
+        rowsPerPage={rowsPerPage}
+      />
 
       {
         displayReasons && createPortal(

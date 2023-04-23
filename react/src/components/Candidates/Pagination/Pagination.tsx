@@ -33,7 +33,7 @@ const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }) => 
         return null
 
     return (
-        <div className="pagination">
+        <nav className="pagination" data-testid='pagination'>
             <div className="paginationButtons">
                 <button
                     className="arrowButton"
@@ -60,7 +60,7 @@ const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }) => 
                     &#8250;
                 </button>
             </div>
-        </div>
+        </nav>
     );
 };
 

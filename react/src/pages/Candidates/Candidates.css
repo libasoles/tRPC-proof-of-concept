@@ -118,7 +118,7 @@ a {
   justify-content: center;
   align-items: center;
   width: 100%;
-  top: 50%;
+  top: calc(100vh / 2);
 }
 
 .loading span {
@@ -129,7 +129,7 @@ a {
   height: 20px;
   font-size: 1em;
   background-color: white;
-  padding: 0 20px;
+  padding: 5px 20px;
 }
 
 .error {
