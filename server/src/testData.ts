@@ -1451,7 +1451,7 @@ export class Candidates {
     );
   }
 
-  slice(start: number, amount: number) {
+  slice(start: number, amount: number): Candidate[] {
     const results = this.list().slice(start, start + amount);
 
     return results;

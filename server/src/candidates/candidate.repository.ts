@@ -1,6 +1,6 @@
-import { Candidates } from "../testData";
+import { Candidates, Candidate as PersistentCandidate } from "../testData";
 import type { CandidateRequestedFields } from "./candidate.types";
-import type { Candidate, CandidateField } from "#/types";
+import type { CandidateField } from "#/types";
 import container from "../dependencyInjectionContainer";
 
 type Filters = {
@@ -17,20 +17,25 @@ export default class CandidateRepository {
   ) {
     const start = offset * limit;
 
-    const results = setup(container.cradle.candidates, filters)
+    const onlyRequestedFields = (candidate: PersistentCandidate) =>
+      using(requestedFields || []).reduceFields(candidate);
+
+    const candidateDatabase = container.cradle.candidates;
+
+    const results = setup(candidateDatabase, filters)
       .slice(start, limit)
-      // @ts-ignore
-      .map((candidate) => using(requestedFields).reduce(candidate));
+      .map(onlyRequestedFields);
 
     return {
       results,
-      numberOfRecords: setup(container.cradle.candidates, filters).list()
-        .length,
+      numberOfRecords: setup(candidateDatabase, filters).list().length,
     };
   }
 
   updateReasons(candidateId: string, reasonIds: number[]) {
-    const candidate = container.cradle.candidates.get(candidateId);
+    const candidateDatabase = container.cradle.candidates;
+
+    const candidate = candidateDatabase.get(candidateId);
 
     if (!candidate) {
       throw new Error("Candidate not found");
@@ -38,7 +43,7 @@ export default class CandidateRepository {
 
     candidate.reason = reasonIds;
 
-    container.cradle.candidates.update(candidate);
+    candidateDatabase.update(candidate);
 
     return candidate;
   }
@@ -61,7 +66,7 @@ const setup = (candidates: Candidates, filters: Filters) => {
 };
 
 const using = (requestedFields: CandidateRequestedFields) => ({
-  reduce: (candidate: Candidate) =>
+  reduceFields: (candidate: PersistentCandidate) =>
     Object.fromEntries(
       Object.entries(candidate).filter(([key]) =>
         requestedFields?.includes(key as CandidateField)
