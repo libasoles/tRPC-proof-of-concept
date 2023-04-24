@@ -1,4 +1,4 @@
-import candidateService from "../candidates/candidate.service";
+import container from "../dependencyInjectionContainer";
 import { t } from "../trpc";
 import { z } from "zod";
 
@@ -23,14 +23,15 @@ function validateRejectParameters() {
 }
 
 const candidateRouter = t.router({
-  // TODO: inject service
   all: t.procedure
     .input(validateListParameters())
     // @ts-ignore
-    .query(({ input }) => candidateService.all(input)),
+    .query(({ input }) => container.cradle.candidateService.all(input)),
   updateReasons: t.procedure
     .input(validateRejectParameters())
-    .mutation(({ input }) => candidateService.updateReasons(input)),
+    .mutation(({ input }) =>
+      container.cradle.candidateService.updateReasons(input)
+    ),
 });
 
 export default candidateRouter;

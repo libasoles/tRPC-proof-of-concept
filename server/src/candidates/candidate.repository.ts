@@ -7,13 +7,13 @@ type Filters = {
   search: string;
 };
 
-export default {
-  all: (
+export default class CandidateRepository {
+  all(
     filters: Filters,
     requestedFields?: CandidateRequestedFields,
     offset = 0,
     limit = 10
-  ) => {
+  ) {
     const start = offset * limit;
 
     const results = setup(candidates, filters)
@@ -25,8 +25,9 @@ export default {
       results,
       numberOfRecords: setup(candidates, filters).list().length,
     };
-  },
-  updateReasons: (candidateId: string, reasonIds: number[]) => {
+  }
+
+  updateReasons(candidateId: string, reasonIds: number[]) {
     const candidate = candidates.get(candidateId);
 
     if (!candidate) {
@@ -38,8 +39,8 @@ export default {
     candidates.update(candidate);
 
     return candidate;
-  },
-};
+  }
+}
 
 const setup = (candidates: Candidates, filters: Filters) => {
   const { onlyApproved, search } = filters;

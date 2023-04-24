@@ -1,6 +1,6 @@
 import { Candidate, Reason } from "../../../trpc/types";
+import container from "../dependencyInjectionContainer";
 import { Candidate as PersistedCandidate, reasons } from "../testData";
-import candidateRepository from "./candidate.repository";
 import { CandidateRequestedFields } from "./candidate.types";
 
 // TODO: move to config file
@@ -20,29 +20,33 @@ type RejectParams = {
   reasonIds: number[];
 };
 
-export default {
-  all: ({ filters, requestedFields, pageNumber = 1 }: QueryAllParams) => {
+export default class CandidateService {
+  all({ filters, requestedFields, pageNumber = 1 }: QueryAllParams) {
     const offset = pageNumber - 1;
 
-    // TODO: inject repository
-    const { results, numberOfRecords } = candidateRepository.all(
-      filters,
-      requestedFields,
-      offset,
-      numberOfRecordsPerPage
-    );
+    const { results, numberOfRecords } =
+      container.cradle.candidateRepository.all(
+        filters,
+        requestedFields,
+        offset,
+        numberOfRecordsPerPage
+      );
 
     return {
       candidates: transformAll(results),
       numberOfRecords,
     };
-  },
-  updateReasons: ({ candidateId, reasonIds }: RejectParams) => {
-    const candidate = candidateRepository.updateReasons(candidateId, reasonIds);
+  }
+
+  updateReasons({ candidateId, reasonIds }: RejectParams) {
+    const candidate = container.cradle.candidateRepository.updateReasons(
+      candidateId,
+      reasonIds
+    );
 
     return transform(candidate);
-  },
-};
+  }
+}
 
 // TODO: move transformers to separate file?
 function transformAll(
