@@ -1,21 +1,22 @@
 import CandidateService from "./candidate.service";
+import "./candidate.service.mocks";
 
 describe("CandidateService", () => {
   let candidateService: CandidateService;
+
+  const requestedFields = ["name", "email"];
+  const pageNumber = 1;
 
   beforeEach(() => {
     candidateService = new CandidateService();
   });
 
-  describe("all", () => {
-    // TODO: setup a list of candidates
+  describe("get all candidates", () => {
     it("should return a list of candidates", () => {
       const filters = {
         onlyApproved: false,
         search: "",
       };
-      const requestedFields = ["name", "email"];
-      const pageNumber = 2;
 
       const result = candidateService.all({
         filters,
@@ -27,14 +28,23 @@ describe("CandidateService", () => {
       expect(result.candidates).toBeDefined();
       expect(result.numberOfRecords).toBeDefined();
       expect(result.candidates.length).toBe(10);
-      expect(result.numberOfRecords).toBe(66);
+      expect(result.numberOfRecords).toBe(11);
     });
   });
 
-  describe("updateReasons", () => {
-    it("should return transformed candidate", () => {
-      const candidateId = "5a272e9068adf47eb31fe789";
+  describe("update rejection reasons", () => {
+    it("should return the candidate with mapped reasons", () => {
+      const candidateId = "3";
       const reasonIds = [1, 2, 3];
+
+      const expectedReasons = [
+        {
+          id: 1,
+          description: "Cantidad de materias aprobadas fuera de lo deseado",
+        },
+        { id: 2, description: "Salario pretendido fuera de rango" },
+        { id: 3, description: "Ubicación" },
+      ];
 
       const result = candidateService.updateReasons({
         candidateId,
@@ -42,6 +52,7 @@ describe("CandidateService", () => {
       });
 
       expect(result).toBeDefined();
+      expect(result.reason).toMatchObject(expectedReasons);
     });
   });
 });

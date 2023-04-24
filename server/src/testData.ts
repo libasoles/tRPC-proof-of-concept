@@ -22,7 +22,7 @@ export type Candidate = {
 type Filter = (candidate: Candidate) => boolean;
 
 export class Candidates {
-  store: Candidate[] = [
+  private store: Candidate[] = [
     {
       id: "5a271a1368adf47eb31fe683",
       name: "Aiden Armstrong",
@@ -1422,6 +1422,10 @@ export class Candidates {
 
   private filters: Filter[] = [];
 
+  constructor(data?: Candidate[]) {
+    if (data) this.store = data;
+  }
+
   filter(filter: Filter) {
     this.filters.push(filter);
 
@@ -1473,8 +1477,6 @@ export class Candidates {
 
   private resetFilters = () => (this.filters = []);
 }
-
-export const candidates = new Candidates();
 
 export const reasons = [
   { id: 1, description: "Cantidad de materias aprobadas fuera de lo deseado" },

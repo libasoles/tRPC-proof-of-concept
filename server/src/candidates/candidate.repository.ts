@@ -1,6 +1,7 @@
-import { Candidates, candidates } from "../testData";
+import { Candidates } from "../testData";
 import type { CandidateRequestedFields } from "./candidate.types";
 import type { Candidate, CandidateField } from "#/types";
+import container from "../dependencyInjectionContainer";
 
 type Filters = {
   onlyApproved: boolean;
@@ -16,19 +17,20 @@ export default class CandidateRepository {
   ) {
     const start = offset * limit;
 
-    const results = setup(candidates, filters)
+    const results = setup(container.cradle.candidates, filters)
       .slice(start, limit)
       // @ts-ignore
       .map((candidate) => using(requestedFields).reduce(candidate));
 
     return {
       results,
-      numberOfRecords: setup(candidates, filters).list().length,
+      numberOfRecords: setup(container.cradle.candidates, filters).list()
+        .length,
     };
   }
 
   updateReasons(candidateId: string, reasonIds: number[]) {
-    const candidate = candidates.get(candidateId);
+    const candidate = container.cradle.candidates.get(candidateId);
 
     if (!candidate) {
       throw new Error("Candidate not found");
@@ -36,7 +38,7 @@ export default class CandidateRepository {
 
     candidate.reason = reasonIds;
 
-    candidates.update(candidate);
+    container.cradle.candidates.update(candidate);
 
     return candidate;
   }
