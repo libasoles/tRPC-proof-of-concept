@@ -1,4 +1,4 @@
-import { Candidate, Reason } from "../../../trpc/types";
+import { Candidate, Reason } from "#/types";
 import container from "../dependencyInjectionContainer";
 import { Candidate as PersistedCandidate, reasons } from "../testData";
 import { CandidateRequestedFields } from "./candidate.types";

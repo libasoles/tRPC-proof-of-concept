@@ -1,6 +1,6 @@
 import { Candidates, candidates } from "../testData";
 import type { CandidateRequestedFields } from "./candidate.types";
-import type { Candidate, CandidateField } from "../../../trpc/types";
+import type { Candidate, CandidateField } from "#/types";
 
 type Filters = {
   onlyApproved: boolean;
