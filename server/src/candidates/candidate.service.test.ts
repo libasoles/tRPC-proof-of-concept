@@ -4,7 +4,7 @@ import "./candidate.service.mocks";
 describe("CandidateService", () => {
   let candidateService: CandidateService;
 
-  const requestedFields = ["name", "email"];
+  const requestedFields = ["name", "email", "reason"];
   const pageNumber = 1;
 
   beforeEach(() => {
@@ -25,10 +25,167 @@ describe("CandidateService", () => {
         pageNumber,
       });
 
-      expect(result.candidates).toBeDefined();
-      expect(result.numberOfRecords).toBeDefined();
       expect(result.candidates.length).toBe(10);
       expect(result.numberOfRecords).toBe(11);
+    });
+
+    it("should return a list of approved candidates only ", () => {
+      const filters = {
+        onlyApproved: true,
+        search: "",
+      };
+
+      const result = candidateService.all({
+        filters,
+        // @ts-ignore
+        requestedFields,
+        pageNumber,
+      });
+
+      expect(result.candidates.length).toBe(1);
+      expect(result.numberOfRecords).toBe(1);
+    });
+
+    it("should return a list of candidates filtered by search", () => {
+      const filters = {
+        onlyApproved: false,
+        search: "Roberts",
+      };
+
+      const result = candidateService.all({
+        filters,
+        // @ts-ignore
+        requestedFields,
+        pageNumber,
+      });
+
+      expect(result.candidates.length).toBe(1);
+      expect(result.numberOfRecords).toBe(1);
+    });
+
+    it('should format the "reason" field', () => {
+      const filters = {
+        onlyApproved: false,
+        search: "Roberts",
+      };
+
+      const result = candidateService.all({
+        filters,
+        // @ts-ignore
+        requestedFields,
+        pageNumber,
+      });
+
+      const firstCandidate = result.candidates[0];
+
+      expect(firstCandidate.reason).toEqual([
+        {
+          id: 1,
+          description: "Cantidad de materias aprobadas fuera de lo deseado",
+        },
+        {
+          description: "No estudia/o carreras deseadas",
+          id: 4,
+        },
+        {
+          description: "Edad fuera de rango",
+          id: 6,
+        },
+      ]);
+    });
+
+    it("should return only the requested fields", () => {
+      const filters = {
+        onlyApproved: false,
+        search: "Clarington",
+      };
+
+      const result = candidateService.all({
+        filters,
+        // @ts-ignore
+        requestedFields,
+        pageNumber,
+      });
+
+      const firstCandidate = result.candidates[0];
+
+      expect(firstCandidate).toEqual({
+        name: "Pat Clarington",
+        email: "bulinad@ewgatna.org",
+        reason: [
+          {
+            id: 1,
+            description: "Cantidad de materias aprobadas fuera de lo deseado",
+          },
+        ],
+      });
+    });
+
+    it('should return "reason" as an empty array if the candidate is approved', () => {
+      const filters = {
+        onlyApproved: true,
+        search: "",
+      };
+
+      const result = candidateService.all({
+        filters,
+        // @ts-ignore
+        requestedFields,
+        pageNumber,
+      });
+
+      const firstCandidate = result.candidates[0];
+
+      expect(firstCandidate.reason).toEqual([]);
+    });
+
+    it("should return an empty array if there are no candidates", () => {
+      const filters = {
+        onlyApproved: false,
+        search: "Julien Smith",
+      };
+
+      const result = candidateService.all({
+        filters,
+        // @ts-ignore
+        requestedFields,
+        pageNumber,
+      });
+
+      expect(result.candidates).toEqual([]);
+    });
+
+    it("should return results for the second page only", () => {
+      const filters = {
+        onlyApproved: false,
+        search: "",
+      };
+
+      const result = candidateService.all({
+        filters,
+        // @ts-ignore
+        requestedFields,
+        pageNumber: 2,
+      });
+
+      expect(result.candidates.length).toBe(1);
+      expect(result.numberOfRecords).toBe(11);
+    });
+
+    it("should return an empty array if there are no candidates for a page", () => {
+      const filters = {
+        onlyApproved: false,
+        search: "",
+      };
+
+      const result = candidateService.all({
+        filters,
+        // @ts-ignore
+        requestedFields,
+        pageNumber: 33,
+      });
+
+      expect(result.candidates).toEqual([]);
     });
   });
 
@@ -51,8 +208,16 @@ describe("CandidateService", () => {
         reasonIds,
       });
 
-      expect(result).toBeDefined();
       expect(result.reason).toMatchObject(expectedReasons);
+    });
+
+    it("should throw an error if the reason does not exist", () => {
+      const candidateId = "3";
+      const reasonIds = [1, 2, 3, 29];
+
+      expect(() =>
+        candidateService.updateReasons({ candidateId, reasonIds })
+      ).toThrowError("Reason not found");
     });
   });
 });
