@@ -1,12 +1,12 @@
-# React
+# Express server
 
 ## How to run it
 
 `npm install`
 
-Frontend:
+Server:
 
-`npm run start`
+`npm run dev`
 
 Tests:
 
