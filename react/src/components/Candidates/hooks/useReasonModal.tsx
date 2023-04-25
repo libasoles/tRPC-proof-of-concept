@@ -1,9 +1,9 @@
 import { SyntheticEvent, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 import RejectionReasons from "@/components/Candidates/RejectionReasons";
-import { queryClient, trpc } from "@/api";
-import { Candidate } from "#/types";
 import { getQueryKey } from "@trpc/react-query";
+import { queryClient, trpc } from "@/api";
+import type { Candidate } from "#/types";
 
 const useReasonModal = () => {
     const [displayReasons, setDisplayReasons] = useState(false)

@@ -1,7 +1,7 @@
 import Pagination from "@/components/Candidates/Pagination";
-import useCanditateTable, { EnabledColumns } from "@/components/Candidates/useCanditateTable";
+import useCanditateTable, { EnabledColumns } from "@/components/Candidates/hooks/useCanditateTable";
+import useReasonModal from "@/components/Candidates/hooks/useReasonModal";
 import { rowsPerPage } from "@/config";
-import useReasonModal from "@/components/Candidates/useReasonModal";
 import "./Candidates.css";
 
 type Props = { enabledColumns: Partial<EnabledColumns> }
@@ -25,6 +25,7 @@ const Candidates = ({ enabledColumns }: Props) => {
     prepareRow,
     currentPage,
     setCurrentPage,
+    filterResultsWithDebounce,
     filterResults
   } = useCanditateTable(enabledColumns, onAddReason)
 
@@ -40,7 +41,7 @@ const Candidates = ({ enabledColumns }: Props) => {
         <form>
           <div className="filters">
             <div className="filter">
-              <input type="text" placeholder="Buscar por nombre..." onKeyUp={(e) => filterResults("search", e.currentTarget.value)} />
+              <input type="text" placeholder="Buscar por nombre..." onKeyUp={(e) => filterResultsWithDebounce("search", e.currentTarget.value)} />
             </div>
             <div className="filter">
               <label htmlFor="filter-status">
@@ -51,8 +52,8 @@ const Candidates = ({ enabledColumns }: Props) => {
           </div>
         </form>
       </div>
-      {isLoading && <div className="loading"><span>Cargando...</span></div>}
 
+      {isLoading && <div className="loading"><span>Cargando...</span></div>}
 
       <table {...getTableProps()}>
         <thead>
@@ -64,7 +65,7 @@ const Candidates = ({ enabledColumns }: Props) => {
             </tr>
           ))}
         </thead>
-        <tbody {...getTableBodyProps()} data-testid="table-body">
+        <tbody {...getTableBodyProps()} data-testid="table-body" className={rows.length === 0 ? "hidden" : "visible"}>
           {
             rows.map((row, i) => {
               prepareRow(row)

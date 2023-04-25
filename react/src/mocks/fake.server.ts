@@ -1,4 +1,4 @@
-import { Candidate } from "#/types";
+import type { Candidate } from "#/types";
 import { createCandidates } from "./data.factory";
 import { rowsPerPage } from "@/config";
 import {

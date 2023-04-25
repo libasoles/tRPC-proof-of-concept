@@ -1,4 +1,4 @@
-import { Candidate, Reason } from "#/types";
+import type { Candidate, Reason } from "#/types";
 import { Candidate as PersistedCandidate, reasons } from "../testData";
 
 export function transformAll(

@@ -1,5 +1,5 @@
 import { createTRPCMsw } from "msw-trpc";
-import { AppRouter, Reason } from "#/types";
+import type { AppRouter, Reason } from "#/types";
 import { createCandidates } from "./data.factory";
 import { fakeServer } from "./fake.server";
 import {

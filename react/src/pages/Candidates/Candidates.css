@@ -59,6 +59,18 @@ input[type="text"] {
 table {
   height: fit-content;
   width: 100%;
+  table-layout: fixed;
+}
+
+@keyframes show-row {
+  from {
+    opacity: 0;
+    display: none;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 tr {
@@ -69,17 +81,24 @@ tr:nth-of-type(odd) {
   background: #e3e3e3;
 }
 
+.visible {
+  animation: show-row 0.2s ease-in-out;
+}
+
+th,
+td {
+  width: 100px;
+  padding: 0 8px;
+}
+
 th {
-  width: fit-content;
   background: #000;
   color: #fff;
-  padding: 0 8px;
 }
 
 td {
   width: 100%;
-  padding: 0 8px;
-  width: fit-content;
+  word-wrap: break-word;
 }
 
 a {
