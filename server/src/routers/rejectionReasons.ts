@@ -1,9 +1,10 @@
 import { t } from "../trpc";
-import rejectionReasonService from "../candidates/rejectionReason.service";
+import container from "../dependencyInjectionContainer";
 
 const rejectionReasonsRouter = t.router({
-  // TODO: inject service
   all: t.procedure.query(() => {
+    const { rejectionReasonService } = container.cradle;
+
     return rejectionReasonService.all();
   }),
 });

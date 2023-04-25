@@ -1,10 +1,11 @@
+import { Candidate } from "#/types";
 import CandidateService from "./candidate.service";
 import "./candidate.service.mocks";
 
 describe("CandidateService", () => {
   let candidateService: CandidateService;
 
-  const requestedFields = ["name", "email", "reason"];
+  const requestedFields = ["name", "email", "reason"] as (keyof Candidate)[];
   const pageNumber = 1;
 
   beforeEach(() => {
@@ -20,7 +21,6 @@ describe("CandidateService", () => {
 
       const result = candidateService.all({
         filters,
-        // @ts-ignore
         requestedFields,
         pageNumber,
       });
@@ -37,7 +37,6 @@ describe("CandidateService", () => {
 
       const result = candidateService.all({
         filters,
-        // @ts-ignore
         requestedFields,
         pageNumber,
       });
@@ -54,7 +53,6 @@ describe("CandidateService", () => {
 
       const result = candidateService.all({
         filters,
-        // @ts-ignore
         requestedFields,
         pageNumber,
       });
@@ -71,7 +69,6 @@ describe("CandidateService", () => {
 
       const result = candidateService.all({
         filters,
-        // @ts-ignore
         requestedFields,
         pageNumber,
       });
@@ -102,7 +99,6 @@ describe("CandidateService", () => {
 
       const result = candidateService.all({
         filters,
-        // @ts-ignore
         requestedFields,
         pageNumber,
       });
@@ -129,7 +125,6 @@ describe("CandidateService", () => {
 
       const result = candidateService.all({
         filters,
-        // @ts-ignore
         requestedFields,
         pageNumber,
       });
@@ -147,7 +142,6 @@ describe("CandidateService", () => {
 
       const result = candidateService.all({
         filters,
-        // @ts-ignore
         requestedFields,
         pageNumber,
       });
@@ -163,7 +157,6 @@ describe("CandidateService", () => {
 
       const result = candidateService.all({
         filters,
-        // @ts-ignore
         requestedFields,
         pageNumber: 2,
       });
@@ -180,7 +173,6 @@ describe("CandidateService", () => {
 
       const result = candidateService.all({
         filters,
-        // @ts-ignore
         requestedFields,
         pageNumber: 33,
       });

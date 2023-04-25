@@ -1,7 +1,7 @@
 import { reasons } from "../testData";
 
-export default {
-  all: () => {
-    return reasons; // no reason for a repository here
-  },
-};
+export default class RejectionReasonService {
+  all() {
+    return reasons; // no need for a repository here
+  }
+}

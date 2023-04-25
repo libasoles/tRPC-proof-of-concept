@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
 import "./Pagination.css";
 
-// @ts-ignore
-const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }) => {
+type Props = {
+    currentPage: number;
+    setCurrentPage: (pageNumber: number) => void;
+    totalRows: number;
+    rowsPerPage: number;
+};
+
+const Pagination = ({ currentPage, setCurrentPage, totalRows, rowsPerPage }: Props) => {
     const numberOfPages = Math.ceil(totalRows / rowsPerPage);
 
     const pages = [...new Array(numberOfPages)];

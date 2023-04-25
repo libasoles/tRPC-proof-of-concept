@@ -25,7 +25,6 @@ function validateRejectParameters() {
 const candidateRouter = t.router({
   all: t.procedure
     .input(validateListParameters())
-    // @ts-ignore
     .query(({ input }) => container.cradle.candidateService.all(input)),
   updateReasons: t.procedure
     .input(validateRejectParameters())
