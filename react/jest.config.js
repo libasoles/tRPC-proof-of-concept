@@ -12,6 +12,10 @@ const config = {
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 
   testEnvironment: "jest-environment-jsdom",
+  preset: "ts-jest",
+  collectCoverage: true,
+  coverageDirectory: "coverage",
+  coverageProvider: "v8",
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

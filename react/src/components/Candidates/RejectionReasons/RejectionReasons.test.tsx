@@ -85,4 +85,26 @@ describe("RejectionReasons", () => {
 
         expect(onClose).toHaveBeenCalled();
     });
+
+    it('preselects the reasons passed in', () => {
+        render(
+            <RejectionReasons
+                preselectedReasons={[1, 3]}
+                onSelectReason={noAction}
+                onClose={noAction}
+            />
+        );
+
+        const reason1 = screen.getByText("Reason 1");
+        const reason2 = screen.getByText("Reason 2");
+        const reason3 = screen.getByText("Reason 3");
+
+        const reason1Checkbox = within(reason1).getByRole('checkbox') as HTMLInputElement;
+        const reason2Checkbox = within(reason2).getByRole('checkbox') as HTMLInputElement;
+        const reason3Checkbox = within(reason3).getByRole('checkbox') as HTMLInputElement;
+
+        expect(reason1Checkbox.checked).toBe(true);
+        expect(reason2Checkbox.checked).toBe(false);
+        expect(reason3Checkbox.checked).toBe(true);
+    });
 });
