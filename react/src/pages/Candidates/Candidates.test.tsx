@@ -21,6 +21,11 @@ export const server = setupServer(...handlers);
 
 const firstRow = 0;
 
+jest.mock('@/config', () => ({
+  ...jest.requireActual('@/config'),
+  debounceTime: 0,
+}));
+
 describe('Candidates', () => {
   beforeAll(() => server.listen());
   afterAll(() => server.close());

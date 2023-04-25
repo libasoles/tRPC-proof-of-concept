@@ -3,6 +3,7 @@ import { useState, useMemo, useCallback, useRef } from "react";
 import { Column, useTable } from "react-table"
 import dayjs from 'dayjs'
 import { trpc } from "@/api";
+import { debounceTime } from "@/config";
 
 export type EnabledColumns = Record<CandidateField, boolean>
 
@@ -15,7 +16,7 @@ const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason:
     search: "",
   });
 
-  const debounce = useRef<NodeJS.Timeout>()
+  const debounceSearch = useRef<NodeJS.Timeout>()
 
   const { data, isLoading, isError, isSuccess } = trpc.candidates.all.useQuery({ filters, requestedFields, pageNumber: currentPage })
 
@@ -25,9 +26,13 @@ const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason:
   }, [])
 
   const filterResultsWithDebounce = useCallback((name: string, value: unknown) => {
-    clearTimeout(debounce.current);
+    if (!debounceTime) {
+      filterResults(name, value)
+      return
+    }
 
-    debounce.current = setTimeout(() => filterResults(name, value), 500);
+    clearTimeout(debounceSearch.current);
+    debounceSearch.current = setTimeout(() => filterResults(name, value), debounceTime);
   }, [filterResults])
 
   const columns = useMemo<Column<Partial<Candidate>>[]>(
