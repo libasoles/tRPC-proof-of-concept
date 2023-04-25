@@ -55,7 +55,7 @@ https://user-images.githubusercontent.com/8009070/234359162-fafe906f-beb2-4b22-9
 - Navigate results.
 - Arrows disable on first and last page.
 
-https://user-images.githubusercontent.com/8009070/234360391-0acd14c5-9d52-4c7d-884c-ec04cecbeccf.mov
+https://user-images.githubusercontent.com/8009070/234361436-a4c648a6-1a40-4dc5-9652-d3afacdd814f.mov
 
 ### Edit Candidate status
 
@@ -69,7 +69,7 @@ https://user-images.githubusercontent.com/8009070/234359475-8c04f37a-bdec-41b2-b
 
 There's no UI for this, but you can configure the columns you want to display.
 
-https://user-images.githubusercontent.com/8009070/234359534-b873a562-1f2f-4dbf-91c6-48d36cc75891.mov
+https://user-images.githubusercontent.com/8009070/234361545-dafd9a29-f1cf-4f9e-91dc-1258b3107e82.mov
 
 ### Error screen
 
