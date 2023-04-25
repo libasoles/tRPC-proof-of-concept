@@ -44,26 +44,39 @@ Utils:
 
 ### Filters
 
-- Debounced search field (only filters by name for now)
-- Checkbox to display only approved candidates
+- Debounced search field (only filters by name for now).
+- Checkbox to display only approved candidates.
 - There's a message indicating that there's no results.
+
+https://user-images.githubusercontent.com/8009070/234359162-fafe906f-beb2-4b22-91c3-b2cb227ae73f.mov
 
 ### Paginated list
 
-- Toggle pages
+- Navigate results.
 - Arrows disable on first and last page.
+
+https://user-images.githubusercontent.com/8009070/234360391-0acd14c5-9d52-4c7d-884c-ec04cecbeccf.mov
 
 ### Edit Candidate status
 
-- Edit button in rejection reasons columns
-- Modal box to select or deselect rejection reasons
-- The list updates when the modal closes
+- Edit button in rejection reasons columns.
+- Modal box to select or deselect rejection reasons.
+- The list updates when the modal closes.
+
+https://user-images.githubusercontent.com/8009070/234359475-8c04f37a-bdec-41b2-b326-c9ad6f7da57a.mov
 
 ### Config table columns
 
 There's no UI for this, but you can configure the columns you want to display.
 
+https://user-images.githubusercontent.com/8009070/234359534-b873a562-1f2f-4dbf-91c6-48d36cc75891.mov
+
 ### Error screen
 
-- There's a loading message during retries
+- There's a loading message during retries.
 - Display an error message if server fails.
+
+https://user-images.githubusercontent.com/8009070/234359625-e67debe0-bc90-487a-8afd-8b8acc227200.mov
+
+
+
