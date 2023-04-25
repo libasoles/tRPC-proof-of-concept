@@ -1,5 +1,5 @@
 import type { Candidate, CandidateField, Reason } from "#/types";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import dayjs from 'dayjs'
 import { Column, useTable } from "react-table"
 import { trpc } from "@/api";
@@ -9,26 +9,19 @@ export type EnabledColumns = Record<CandidateField, boolean>
 const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason: (candidate: Candidate) => void) => {
   const requestedFields: string[] = useMemo(() => Object.entries(enabledColumns).filter(([_, value]) => value).map(([key, _]) => key), [enabledColumns])
 
-  const [candidates, setCandidates] = useState<Partial<Candidate>[]>([]);
-  const [numberOfRecords, setNumberOfRecords] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     onlyApproved: false,
     search: "",
   });
 
-  const { data, status } = trpc.candidates.all.useQuery({ filters, requestedFields, pageNumber: currentPage })
+  const { data, isLoading, isError, isSuccess } = trpc.candidates.all.useQuery({ filters, requestedFields, pageNumber: currentPage })
 
   const filterResults = useCallback((name: string, value: unknown) => {
     setCurrentPage(1)
     // TODO: debounce
     setFilters((filters) => ({ ...filters, [name]: value }))
   }, [])
-
-  useEffect(() => {
-    setCandidates(data?.candidates || []);
-    setNumberOfRecords(data?.numberOfRecords || 0)
-  }, [data]);
 
   const columns = useMemo<Column<Partial<Candidate>>[]>(
     () => [
@@ -72,14 +65,16 @@ const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason:
   )
 
   return {
-    status,
-    numberOfRecords,
+    isLoading,
+    isError,
+    isSuccess,
+    numberOfRecords: data?.numberOfRecords || 0,
     currentPage,
     setCurrentPage,
     filterResults,
     ...useTable<Partial<Candidate>>({
       columns,
-      data: candidates,
+      data: data?.candidates || [],
     })
   }
 }

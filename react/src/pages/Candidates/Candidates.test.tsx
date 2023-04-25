@@ -114,6 +114,19 @@ describe('Candidates', () => {
       const match = screen.getByText(/Moss/i);
       expect(match).toBeInTheDocument();
     });
+
+    it('displays a message when there are no results', async () => {
+      renderComponent();
+
+      write('Nobody')
+
+      await assertTableIsEmpty()
+
+      await waitFor(() => {
+        const message = screen.getByText(/No hay resultados de busqueda./i);
+        expect(message).toBeInTheDocument();
+      })
+    });
   })
 
   describe("Table", () => {
@@ -306,6 +319,14 @@ async function assertTableHasNumberOfRows(expected: number) {
   const tbodyElement = await screen.findByTestId('table-body');
   const rows = await within(tbodyElement).findAllByRole('row');
   expect(rows).toHaveLength(expected);
+}
+
+async function assertTableIsEmpty() {
+  const tbodyElement = await screen.findByTestId('table-body');
+  await waitFor(() => {
+    const rows = within(tbodyElement).queryAllByRole('row');
+    expect(rows).toHaveLength(0);
+  })
 }
 
 function assertCandidateIsListed(name: string) {

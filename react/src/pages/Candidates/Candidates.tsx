@@ -14,7 +14,9 @@ const Candidates = ({ enabledColumns }: Props) => {
   } = useReasonModal()
 
   const {
-    status,
+    isLoading,
+    isError,
+    isSuccess,
     numberOfRecords,
     getTableProps,
     getTableBodyProps,
@@ -26,8 +28,10 @@ const Candidates = ({ enabledColumns }: Props) => {
     filterResults
   } = useCanditateTable(enabledColumns, onAddReason)
 
-  if (status === 'error')
+  if (isError)
     return <div className="error">Hubo un error cargando el listado. Intenta recargando la pagina.</div>
+
+  const hasNoResults = isSuccess && rows.length === 0
 
   return (
     <div className="content" data-testid="candidates-page">
@@ -47,7 +51,9 @@ const Candidates = ({ enabledColumns }: Props) => {
           </div>
         </form>
       </div>
-      {(status === 'loading') && <div className="loading"><span>Cargando...</span></div>}
+      {isLoading && <div className="loading"><span>Cargando...</span></div>}
+
+
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
@@ -73,6 +79,8 @@ const Candidates = ({ enabledColumns }: Props) => {
           }
         </tbody>
       </table >
+
+      {hasNoResults && <div className="no-results">No hay resultados de busqueda.</div>}
 
       <Pagination
         currentPage={currentPage}

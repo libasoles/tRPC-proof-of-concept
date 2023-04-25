@@ -39,6 +39,11 @@ class FakeServer {
     },
   };
 
+  mockNoResults = {
+    candidates: [],
+    numberOfRecords: 0,
+  };
+
   candidate(id: string) {
     return this.mockResponse.candidates.find(
       (candidate) => candidate.id === id

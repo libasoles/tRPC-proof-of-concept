@@ -59,6 +59,9 @@ export const handlers = [
     if (search === "fail")
       return res(ctx.status(500), ctx.json(fakeServer.mockErrorResponse));
 
+    if (search === "Nobody")
+      return res(ctx.status(200), ctx.data(fakeServer.mockNoResults));
+
     if (onlyApproved) {
       return res(
         ctx.status(200),
