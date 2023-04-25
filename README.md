@@ -1,20 +1,69 @@
-# Emi Labs Challenge
+# Recruiting exercise
 
-Welcome to our technical challenge!
+## Tasks
 
-We're excited to have you here and hope this challenge to be a great opportunity for you to demonstrate your capabilities.
+- list candidates
+- configurable table columns
+- edit rejection reasons
 
-Inside this repository, you'll find a folder for each exercise that we ask you to solve.  
+Using any preferred stack. And designing the UX and basic look and feel.
 
-We wish you the best of luck and happy coding! 🙌
-## Doubts? Questions?
+### Bonus
 
-Feel free to reach out to:
-- Pablo: pablo.giudice@emilabs.ai
-- Andy:  andy@emilabs.ai
-- Martin: martin@emilabs.ai
-- Sofi: sofia.cortes@emilabs.ai
-- Rodri: rodrigo.sevil@emilabs.ai
-- Feche: feche@emilabs.ai
-- Marin: marina.huberman@emilabs.ai
-- Gabi: gabriel.dalborgo@emilabs.ai
+I came up with:
+
+- search filters (with debounce)
+- pagination
+
+Plus the usual status indications:
+
+- loading message
+- no results message
+- error message
+
+## Technologies
+
+Mainly:
+
+- React
+- Node w/express
+- Typescript in both sides
+- tRPC
+
+Tested with:
+
+- Jest
+- React testing library
+- msw (mock server)
+
+Utils:
+
+- React Query
+
+## Demo
+
+### Filters
+
+- Debounced search field (only filters by name for now)
+- Checkbox to display only approved candidates
+- There's a message indicating that there's no results.
+
+### Paginated list
+
+- Toggle pages
+- Arrows disable on first and last page.
+
+### Edit Candidate status
+
+- Edit button in rejection reasons columns
+- Modal box to select or deselect rejection reasons
+- The list updates when the modal closes
+
+### Config table columns
+
+There's no UI for this, but you can configure the columns you want to display.
+
+### Error screen
+
+- There's a loading message during retries
+- Display an error message if server fails.
