@@ -1,4 +1,4 @@
-import { Candidates, Candidate as PersistentCandidate } from "../testData";
+import { Candidates, PersistedCandidate } from "../testData";
 import type { CandidateRequestedFields } from "./candidate.types";
 import type { CandidateField } from "#/types";
 import container from "../dependencyInjectionContainer";
@@ -11,16 +11,16 @@ type Filters = {
 export default class CandidateRepository {
   all(
     filters: Filters,
-    requestedFields?: CandidateRequestedFields,
+    requestedFields: CandidateRequestedFields = [],
     offset = 0,
     limit = 10
   ) {
     const start = offset * limit;
 
-    const onlyRequestedFields = (candidate: PersistentCandidate) =>
-      using(requestedFields || []).reduceFields(candidate);
-
     const candidateDatabase = container.cradle.candidates;
+
+    const onlyRequestedFields = (candidate: PersistedCandidate) =>
+      using(requestedFields).reduceFields(candidate);
 
     const results = setup(candidateDatabase, filters)
       .slice(start, limit)
@@ -66,10 +66,12 @@ const setup = (candidates: Candidates, filters: Filters) => {
 };
 
 const using = (requestedFields: CandidateRequestedFields) => ({
-  reduceFields: (candidate: PersistentCandidate) =>
+  reduceFields: (candidate: PersistedCandidate) =>
     Object.fromEntries(
-      Object.entries(candidate).filter(([key]) =>
-        requestedFields?.includes(key as CandidateField)
-      )
+      Object.entries(candidate).filter(([key]) => {
+        const requestedFieldsPlusId = ["id", ...requestedFields];
+
+        return requestedFieldsPlusId.includes(key as CandidateField);
+      })
     ),
 });

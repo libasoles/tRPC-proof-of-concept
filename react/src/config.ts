@@ -3,7 +3,6 @@ export const rowsPerPage = 10;
 export const debounceTime = 500;
 
 export const enabledColumns = {
-  id: true,
   name: true,
   document: true,
   cv_zonajobs: true,

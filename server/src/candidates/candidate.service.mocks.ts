@@ -1,8 +1,8 @@
 import * as awilix from "awilix";
 import container from "../dependencyInjectionContainer";
-import { Candidate, Candidates } from "@/testData";
+import { PersistedCandidate, Candidates } from "@/testData";
 
-function createCandidate(data: Partial<Candidate> = {}) {
+function createCandidate(data: Partial<PersistedCandidate> = {}) {
   return {
     id: Math.random().toString(36).substring(7),
     name: "Roger W. Mccoy",

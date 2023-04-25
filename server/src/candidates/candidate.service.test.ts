@@ -1,11 +1,16 @@
-import { Candidate } from "#/types";
+import { CandidateField } from "#/types";
 import CandidateService from "./candidate.service";
 import "./candidate.service.mocks";
 
 describe("CandidateService", () => {
   let candidateService: CandidateService;
 
-  const requestedFields = ["name", "email", "reason"] as (keyof Candidate)[];
+  const defaultFilters = {
+    onlyApproved: false,
+    search: "",
+  };
+
+  const requestedFields = ["name", "email", "reason"] as CandidateField[];
   const pageNumber = 1;
 
   beforeEach(() => {
@@ -14,13 +19,8 @@ describe("CandidateService", () => {
 
   describe("get all candidates", () => {
     it("should return a list of candidates", () => {
-      const filters = {
-        onlyApproved: false,
-        search: "",
-      };
-
       const result = candidateService.all({
-        filters,
+        filters: defaultFilters,
         requestedFields,
         pageNumber,
       });
@@ -106,6 +106,7 @@ describe("CandidateService", () => {
       const firstCandidate = result.candidates[0];
 
       expect(firstCandidate).toEqual({
+        id: "7",
         name: "Pat Clarington",
         email: "bulinad@ewgatna.org",
         reason: [
@@ -115,6 +116,20 @@ describe("CandidateService", () => {
           },
         ],
       });
+    });
+
+    it("always returns the id field", () => {
+      const requestedFields = ["email"] as CandidateField[];
+
+      const result = candidateService.all({
+        filters: defaultFilters,
+        requestedFields,
+        pageNumber,
+      });
+
+      const firstCandidate = result.candidates[0];
+
+      expect(firstCandidate).toHaveProperty("id");
     });
 
     it('should return "reason" as an empty array if the candidate is approved', () => {
@@ -150,13 +165,8 @@ describe("CandidateService", () => {
     });
 
     it("should return results for the second page only", () => {
-      const filters = {
-        onlyApproved: false,
-        search: "",
-      };
-
       const result = candidateService.all({
-        filters,
+        filters: defaultFilters,
         requestedFields,
         pageNumber: 2,
       });
@@ -166,13 +176,8 @@ describe("CandidateService", () => {
     });
 
     it("should return an empty array if there are no candidates for a page", () => {
-      const filters = {
-        onlyApproved: false,
-        search: "",
-      };
-
       const result = candidateService.all({
-        filters,
+        filters: defaultFilters,
         requestedFields,
         pageNumber: 33,
       });

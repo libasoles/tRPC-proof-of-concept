@@ -1,3 +1,3 @@
-import { Candidate } from "../testData";
+import { CandidateField } from "#/types";
 
-export type CandidateRequestedFields = (keyof Partial<Candidate>)[];
+export type CandidateRequestedFields = CandidateField[];

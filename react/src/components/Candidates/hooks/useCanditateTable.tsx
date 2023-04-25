@@ -1,13 +1,14 @@
-import type { Candidate, CandidateField, Reason } from "#/types";
+import type { Candidate, CandidateField, PartialCandidate, Reason } from "#/types";
 import { useState, useMemo, useCallback, useRef } from "react";
-import { Column, useTable } from "react-table"
+import { CellProps, Column, useTable } from "react-table"
 import dayjs from 'dayjs'
 import { trpc } from "@/api";
 import { debounceTime } from "@/config";
 
 export type EnabledColumns = Record<CandidateField, boolean>
+type Cell = CellProps<PartialCandidate>
 
-const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason: (candidate: Candidate) => void) => {
+const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason: (candidate: PartialCandidate) => void) => {
   const requestedFields: string[] = useMemo(() => Object.entries(enabledColumns).filter(([_, value]) => value).map(([key, _]) => key), [enabledColumns])
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,34 +36,26 @@ const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason:
     debounceSearch.current = setTimeout(() => filterResults(name, value), debounceTime);
   }, [filterResults])
 
-  const columns = useMemo<Column<Partial<Candidate>>[]>(
+  const columns = useMemo<Column<PartialCandidate>[]>(
     () => [
       { Header: "Nombre", accessor: "name" },
       { Header: "DNI", accessor: "document" },
-      // @ts-ignore
-      { Header: "Zonajobs", accessor: "cv_zonajobs", Cell: ({ value }) => formatLink(value) },
-      // @ts-ignore
-      { Header: "Bumeran", accessor: "cv_bumeran", Cell: ({ value }) => formatLink(value) },
+      { Header: "Zonajobs", accessor: "cv_zonajobs", Cell: ({ value }: Cell) => formatLink(value) },
+      { Header: "Bumeran", accessor: "cv_bumeran", Cell: ({ value }: Cell) => formatLink(value) },
       { Header: "Teléfono", accessor: "phone" },
       { Header: "Email", accessor: "email" },
-      // @ts-ignore
-      { Header: "Fecha", accessor: "date", Cell: ({ value }) => <>{formatDate(value)}</> },
+      { Header: "Fecha", accessor: "date", Cell: ({ value }: Cell) => <>{formatDate(value)}</> },
       { Header: "Edad", accessor: "age" },
-      // @ts-ignore
-      { Header: "Universitario", accessor: "has_university", Cell: ({ value }) => <>{formatBoolean(value)}</> },
+      { Header: "Universitario", accessor: "has_university", Cell: ({ value }: Cell) => <>{formatBoolean(value)}</> },
       { Header: "Carrera", accessor: "career" },
       { Header: "Graduado", accessor: "graduated" },
       { Header: "Materias aprobadas", accessor: "courses_approved" },
       { Header: "Ubicacion", accessor: "location" },
-      // @ts-ignore
-      { Header: "Acepta carga horaria", accessor: "accepts_working_hours", Cell: ({ value }) => <>{formatBoolean(value)}</> },
-      // @ts-ignore
-      { Header: "Expectativa salarial", accessor: "desired_salary", Cell: ({ value }) => <>{formatMoney(value)}</> },
-      // @ts-ignore
-      { Header: "Fue entrevistado", accessor: "had_interview", Cell: ({ value }) => <>{formatBoolean(value)}</> },
+      { Header: "Acepta carga horaria", accessor: "accepts_working_hours", Cell: ({ value }: Cell) => <>{formatBoolean(value)}</> },
+      { Header: "Expectativa salarial", accessor: "desired_salary", Cell: ({ value }: Cell) => <>{formatMoney(value)}</> },
+      { Header: "Fue entrevistado", accessor: "had_interview", Cell: ({ value }: Cell) => <>{formatBoolean(value)}</> },
       {
-        // @ts-ignore
-        Header: "Razones", accessor: "reason", Cell: ({ value, row }) =>
+        Header: "Razones", accessor: "reason", Cell: ({ value, row }: Cell) =>
           <div className="pills">
             {formatReasons(value)}
             <button data-testid="edit-reasons-button" name="edit-reasons" className="add-button" onClick={() => onAddReason(row.original)}>Editar</button>
@@ -71,7 +64,7 @@ const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason:
     ].filter(column => requestedFields.includes(column.accessor as string))
       .map((column) => ({
         ...column,
-        accessor: column.accessor as keyof Partial<Candidate>,
+        accessor: column.accessor as keyof Candidate, // to typed columns
       })),
     [requestedFields, onAddReason]
   )
@@ -85,7 +78,7 @@ const useCanditateTable = (enabledColumns: Partial<EnabledColumns>, onAddReason:
     setCurrentPage,
     filterResults,
     filterResultsWithDebounce,
-    ...useTable<Partial<Candidate>>({
+    ...useTable<PartialCandidate>({
       columns,
       data: data?.candidates || [],
     })

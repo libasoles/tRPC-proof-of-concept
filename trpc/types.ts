@@ -28,4 +28,6 @@ export type Candidate = {
   reason: Reason[];
 };
 
+export type PartialCandidate = Partial<Candidate> & { id: string };
+
 export type CandidateField = keyof Candidate;

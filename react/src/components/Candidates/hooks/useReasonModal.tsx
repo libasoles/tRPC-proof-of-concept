@@ -3,14 +3,16 @@ import { createPortal } from "react-dom";
 import RejectionReasons from "@/components/Candidates/RejectionReasons";
 import { getQueryKey } from "@trpc/react-query";
 import { queryClient, trpc } from "@/api";
-import type { Candidate } from "#/types";
+import type { PartialCandidate } from "#/types";
 
 const useReasonModal = () => {
     const [displayReasons, setDisplayReasons] = useState(false)
     const [preselectedReasons, setPreselectedReasons] = useState<number[]>([])
-    const [currentCandidate, setCurrentCandidate] = useState<Candidate | null>(null)
+    const [currentCandidate, setCurrentCandidate] = useState<PartialCandidate | null>(null)
 
-    const onAddReason = useCallback((candidate: Candidate) => {
+    const onAddReason = useCallback((candidate: PartialCandidate) => {
+        if (!candidate.reason) return
+
         setDisplayReasons(true)
         setPreselectedReasons(candidate.reason.map(({ id }) => id))
         setCurrentCandidate(candidate)

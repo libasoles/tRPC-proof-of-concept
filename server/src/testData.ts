@@ -1,4 +1,4 @@
-export type Candidate = {
+export type PersistedCandidate = {
   id: string;
   name: string;
   document: number;
@@ -19,10 +19,10 @@ export type Candidate = {
   reason: number[]; // TODO: rename to reasons
 };
 
-type Filter = (candidate: Candidate) => boolean;
+type Filter = (candidate: PersistedCandidate) => boolean;
 
 export class Candidates {
-  private store: Candidate[] = [
+  private store: PersistedCandidate[] = [
     {
       id: "5a271a1368adf47eb31fe683",
       name: "Aiden Armstrong",
@@ -1422,7 +1422,7 @@ export class Candidates {
 
   private filters: Filter[] = [];
 
-  constructor(data?: Candidate[]) {
+  constructor(data?: PersistedCandidate[]) {
     if (data) this.store = data;
   }
 
@@ -1451,7 +1451,7 @@ export class Candidates {
     );
   }
 
-  slice(start: number, amount: number): Candidate[] {
+  slice(start: number, amount: number): PersistedCandidate[] {
     const results = this.list().slice(start, start + amount);
 
     return results;
@@ -1461,7 +1461,7 @@ export class Candidates {
     return this.store.find((candidate) => candidate.id === candidateId);
   }
 
-  update(candidate: Partial<Candidate> & { id: string }) {
+  update(candidate: Partial<PersistedCandidate> & { id: string }) {
     const candidateToUpdate = this.get(candidate.id);
 
     if (!candidateToUpdate) throw new Error("Candidate not found");

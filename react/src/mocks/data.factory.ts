@@ -1,10 +1,10 @@
-import type { Candidate } from "#/types";
+import type { Candidate, PartialCandidate } from "#/types";
 
 function generateRandomId() {
   return Math.random().toString(36).substr(2, 10);
 }
 
-export function createCandidate(values?: Partial<Candidate>) {
+export function createCandidate(values?: PartialCandidate) {
   return {
     id: generateRandomId(),
     name: "Aiden Armstrong",
